@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h2>Trek Page for Admin</h2>
+
+    <a href="{{ url_for('admin.create_trek') }}">
+        Create New Trek
+    </a>
+
+    <hr>
+
+    {% if treks %}
+
+        <ul>
+            {% for trek in treks %}
+                <li>
+                    <strong>{{ trek.name }}</strong>
+                    <br>
+                    Location: {{ trek.location }}
+                    <br>
+                    Difficulty: {{ trek.difficulty }}
+                    <br>
+                    Slots: {{ trek.available_slots }}/{{ trek.total_slots }}
+                </li>
+
+                <br>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+        <p>No treks found.</p>
+
+    {% endif %}
+
+</body>    
+</html>
