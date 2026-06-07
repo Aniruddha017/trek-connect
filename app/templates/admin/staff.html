@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Staff Members</title>
+</head>
+
+<body>
+
+
+<h2>Staff Members</h2>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Experience</th>
+        <th>Specialization</th>
+        <th>Assigned Treks</th>
+    </tr>
+
+    {% for staff in staff_members %}
+
+    <tr>
+
+        <td>{{ staff.id }}</td>
+        <td>{{ staff.name }}</td>
+        <td>{{ staff.email }}</td>
+
+        <td>
+            {% if staff.staff_profile %}
+                {{ staff.staff_profile.experience_years }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if staff.staff_profile %}
+                {{ staff.staff_profile.specialization }}
+            {% endif %}
+        </td>
+
+        <td>
+
+            {% for trek in staff.assigned_treks %}
+
+                {{ trek.name }}
+
+                {% if not loop.last %}
+                    ,
+                {% endif %}
+
+            {% endfor %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+</body>
+</html>

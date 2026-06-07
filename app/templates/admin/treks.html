@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Treks</title>
 </head>
 <body>
 
@@ -18,19 +18,89 @@
     {% if treks %}
 
         <ul>
-            {% for trek in treks %}
-                <li>
-                    <strong>{{ trek.name }}</strong>
-                    <br>
-                    Location: {{ trek.location }}
-                    <br>
-                    Difficulty: {{ trek.difficulty }}
-                    <br>
-                    Slots: {{ trek.available_slots }}/{{ trek.total_slots }}
-                </li>
+
+        {% for trek in treks %}
+
+            <li>
+
+                <strong>{{ trek.name }}</strong>
 
                 <br>
-            {% endfor %}
+                Location: {{ trek.location }}
+
+                <br>
+                Difficulty: {{ trek.difficulty }}
+
+                <br>
+                Slots: {{ trek.available_slots }}/{{ trek.total_slots }}
+
+                <br>
+                Duration: {{ trek.duration_days }} days
+
+                <br>
+                Dates:
+                {{ trek.start_date }}
+                to
+                {{ trek.end_date }}
+
+                <br><br>
+
+                <strong>Assigned Staff:</strong>
+
+                {% if trek.assigned_staff %}
+
+                    <ul>
+
+                    {% for staff in trek.assigned_staff %}
+
+                        <li>
+                            {{ staff.name }}
+                            ({{ staff.email }})
+                        </li>
+
+                    {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <p>No staff assigned.</p>
+
+                {% endif %}
+
+                <a href="{{ url_for('admin.assign_staff_to_trek',
+                                    trek_id=trek.id) }}">
+                    Assign Staff
+                </a>
+
+                |
+
+                <a href="{{ url_for('admin.edit_trek',
+                                    trek_id=trek.id) }}">
+                    Edit
+                </a>
+
+                |
+
+                <form
+                    action="{{ url_for('admin.delete_trek',
+                                        trek_id=trek.id) }}"
+                    method="POST"
+                    style="display:inline;"
+                >
+
+                    <button type="submit">
+                        Delete
+                    </button>
+
+                </form>
+
+            </li>
+
+            <hr>
+
+        {% endfor %}
+
         </ul>
 
     {% else %}
@@ -39,5 +109,5 @@
 
     {% endif %}
 
-</body>    
+</body>
 </html>

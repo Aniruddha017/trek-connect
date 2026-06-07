@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Edit Trek</title>
+</head>
+<body>
+
+<h1>Edit Trek</h1>
+
+<form method="POST">
+
+    <div>
+        <label>Trek Name</label><br>
+        <input
+            type="text"
+            name="name"
+            value="{{ trek.name }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Location</label><br>
+        <input
+            type="text"
+            name="location"
+            value="{{ trek.location }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Difficulty</label><br>
+        <select name="difficulty" required>
+            <option value="Easy"
+                {% if trek.difficulty == "Easy" %}selected{% endif %}>
+                Easy
+            </option>
+
+            <option value="Moderate"
+                {% if trek.difficulty == "Moderate" %}selected{% endif %}>
+                Moderate
+            </option>
+
+            <option value="Hard"
+                {% if trek.difficulty == "Hard" %}selected{% endif %}>
+                Hard
+            </option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Duration (Days)</label><br>
+        <input
+            type="number"
+            name="duration_days"
+            value="{{ trek.duration_days }}"
+            min="1"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Description</label><br>
+        <textarea
+            name="description"
+            rows="5"
+            cols="50"
+        >{{ trek.description }}</textarea>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Total Slots</label><br>
+        <input
+            type="number"
+            name="total_slots"
+            value="{{ trek.total_slots }}"
+            min="1"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Available Slots</label><br>
+        <input
+            type="number"
+            name="available_slots"
+            value="{{ trek.available_slots }}"
+            min="0"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Start Date</label><br>
+        <input
+            type="date"
+            name="start_date"
+            value="{{ trek.start_date.strftime('%Y-%m-%d') }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Status</label><br>
+        <select name="status">
+
+            <option value="Pending"
+                {% if trek.status == "Pending" %}selected{% endif %}>
+                Pending
+            </option>
+
+            <option value="Approved"
+                {% if trek.status == "Approved" %}selected{% endif %}>
+                Approved
+            </option>
+
+            <option value="Open"
+                {% if trek.status == "Open" %}selected{% endif %}>
+                Open
+            </option>
+
+            <option value="Closed"
+                {% if trek.status == "Closed" %}selected{% endif %}>
+                Closed
+            </option>
+
+            <option value="Completed"
+                {% if trek.status == "Completed" %}selected{% endif %}>
+                Completed
+            </option>
+
+        </select>
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Update Trek
+    </button>
+
+</form>
+
+</body>
+</html>

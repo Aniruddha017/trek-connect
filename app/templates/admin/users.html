@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Users</title>
+</head>
+
+<body>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <p>{{ category }}: {{ message }}</p>
+    {% endfor %}
+{% endwith %}
+
+
+<h2>All Users</h2>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Blacklisted</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for user in users %}
+
+    <tr>
+
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+
+        <td>
+            {% if user.is_blacklisted %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </td>
+
+        <td>
+
+            {% if user.role == "TREKKER" %}
+
+            <form
+                action="{{ url_for('admin.promote_to_staff', user_id=user.id) }}"
+                method="POST"
+            >
+                <button type="submit">
+                    Promote
+                </button>
+            </form>
+
+            {% endif %}
+
+
+            {% if user.role == "STAFF" %}
+
+            <form
+                action="{{ url_for('admin.demote_to_user', user_id=user.id) }}"
+                method="POST"
+            >
+                <button type="submit">
+                    Demote
+                </button>
+            </form>
+
+            {% endif %}
+
+
+            {% if not user.is_blacklisted %}
+
+            <form
+                action="{{ url_for('admin.blacklist_user', user_id=user.id) }}"
+                method="POST"
+            >
+                <button type="submit">
+                    Blacklist
+                </button>
+            </form>
+
+            {% else %}
+
+            <form
+                action="{{ url_for('admin.whitelist_user', user_id=user.id) }}"
+                method="POST"
+            >
+                <button type="submit">
+                    Whitelist
+                </button>
+            </form>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+</body>
+</html>

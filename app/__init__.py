@@ -11,8 +11,11 @@ from app.models import User
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    user = User.query.get(int(user_id))
 
+    if user and user.is_blacklisted == True:
+        return None 
+    return user
 
 def create_app():
     

@@ -1,0 +1,48 @@
+<h2>Assign Staff to {{ trek.name }}</h2>
+
+<form method="POST">
+
+    <table>
+
+        <tr>
+            <th>Name</th>
+            <th>Experience</th>
+            <th>Assigned</th>
+        </tr>
+
+        {% for staff in staff_members %}
+
+        <tr>
+
+            <td>{{ staff.name }}</td>
+
+            <td>
+                {{ staff.staff_profile.experience_years }}
+            </td>
+
+            <td>
+
+                <input
+                    type="checkbox"
+                    name="staff_ids"
+                    value="{{ staff.id }}"
+
+                    {% if staff in trek.assigned_staff %}
+                        checked
+                    {% endif %}
+                >
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <button type="submit">
+        Save Assignments
+    </button>
+
+</form>
+
