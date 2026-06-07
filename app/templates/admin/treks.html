@@ -6,6 +6,13 @@
     <title>Treks</title>
 </head>
 <body>
+    
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <p>{{ category }}: {{ message }}</p>
+    {% endfor %}
+{% endwith %}
+
 
     <h2>Trek Page for Admin</h2>
 
@@ -36,6 +43,9 @@
 
                 <br>
                 Duration: {{ trek.duration_days }} days
+
+                <br>
+                Status: {{ trek.status}} 
 
                 <br>
                 Dates:
