@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trek Details</title>
+</head>
+<body>
+
+    <h1>{{ trek.name }}</h1>
+
+    <p>Location: {{ trek.location }}</p>
+    <p>Difficulty: {{ trek.difficulty }}</p>
+    <p>Status: {{ trek.status }}</p>
+    <p>Available Slots: {{ trek.available_slots }}</p>
+    <p>Start Date: {{ trek.start_date }}</p>
+    <p>End Date: {{ trek.end_date }}</p>
+
+    <hr>
+
+    <h3>Assigned Staff</h3>
+
+    <ul>
+        {% for staff in trek.assigned_staff %}
+            <li>{{ staff.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h3>Update Status</h3>
+
+    <form method="POST" action="{{ url_for('staff.update_status', trek_id=trek.id) }}">
+
+        <select name="status">
+
+            <option value="Open">Open</option>
+            <option value="Closed">Closed</option>
+            <option value="Completed">Completed</option>
+
+        </select>
+
+        <button type="submit">
+            Update Status
+        </button>
+
+    </form>
+
+    <hr>
+
+    <form method="POST" action="{{ url_for('staff.complete_trek', trek_id=trek.id) }}">
+
+        <button type="submit">
+            Mark Completed
+        </button>
+
+    </form>
+
+    <hr>
+
+    <a href="{{ url_for('staff.participants', trek_id=trek.id) }}">
+        View Participants
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('staff.dashboard') }}">
+        Back to Dashboard
+    </a>
+
+</body>
+</html>

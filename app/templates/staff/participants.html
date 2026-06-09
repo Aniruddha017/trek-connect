@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Participants</title>
+</head>
+<body>
+
+    <h1>Participants</h1>
+
+    <h2>{{ trek.name }}</h2>
+
+    {% if trek.bookings %}
+
+        <table border="1">
+
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Booking Status</th>
+                <th>Payment Status</th>
+            </tr>
+
+            {% for booking in trek.bookings %}
+
+            <tr>
+
+                <td>{{ booking.user.name }}</td>
+                <td>{{ booking.user.email }}</td>
+                <td>{{ booking.status }}</td>
+                <td>{{ booking.payment_status }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+
+        <p>No participants found.</p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('staff.trek_details', trek_id=trek.id) }}">
+        Back to Trek
+    </a>
+
+</body>
+</html>

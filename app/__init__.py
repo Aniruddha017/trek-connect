@@ -30,11 +30,13 @@ def create_app():
 
     from app.main_routes import main
     from app.routes.auth import auth
-    from app.routes.admin import admin 
+    from app.routes.admin import admin
+    from app.routes.staff import staff
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(admin)
+    app.register_blueprint(staff)
     
 
     return app 
