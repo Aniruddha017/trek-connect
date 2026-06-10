@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
-from app.models import Trek, User, StaffProfile
+from app.models import Trek, User, StaffProfile, Booking
 from app import db
 from datetime import datetime, timedelta, date
 from utils.decorators import allowed_roles
@@ -311,3 +311,21 @@ def assign_staff_to_trek(trek_id):
     staff_members = User.query.filter_by(role="STAFF", is_blacklisted=False).all()
 
     return render_template("admin/assign_staff.html", trek=trek, staff_members=staff_members)
+
+@admin.route("/treks/<int:trek_id>/participants")
+@login_required
+@allowed_roles("ADMIN")
+def trek_participants(trek_id):
+
+    trek = Trek.query.get_or_404(trek_id)
+
+    return render_template("admin/participants.html",trek=trek)
+
+@admin.route("/bookings")
+@login_required
+@allowed_roles("ADMIN")
+def bookings():
+
+    bookings = Booking.query.all()
+
+    return render_template("admin/bookings.html",bookings=bookings)

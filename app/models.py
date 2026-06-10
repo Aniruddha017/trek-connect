@@ -65,5 +65,3 @@ class Booking(db.Model):
     status = db.Column(db.String(20), default="Booked")
     payment_status = db.Column(db.String(20), default="Pending")
 
-    __table_args__ = (db.UniqueConstraint("user_id", "trek_id", name="unique_user_trek_booking"),)
-

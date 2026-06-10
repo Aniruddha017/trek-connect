@@ -1,0 +1,23 @@
+<h1>{{ trek.name }}</h1>
+
+<table border="1">
+
+<tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Status</th>
+    <th>Payment</th>
+</tr>
+
+{% for booking in trek.bookings %}
+
+<tr>
+    <td>{{ booking.user.name }}</td>
+    <td>{{ booking.user.email }}</td>
+    <td>{{ booking.status }}</td>
+    <td>{{ booking.payment_status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>

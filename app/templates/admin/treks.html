@@ -91,6 +91,9 @@
                 </a>
 
                 |
+                <a href="{{ url_for('admin.trek_participants',trek_id=trek.id) }}">
+                    Participants
+                </a>
 
                 <form
                     action="{{ url_for('admin.delete_trek',
