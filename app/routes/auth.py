@@ -84,11 +84,13 @@ def login():
         
         login_user(user)
 
-        if user.role == 'ADMIN':
-                return redirect(url_for("admin.dashboard"))
+        if user.role == "ADMIN":
+            return redirect(url_for("admin.dashboard"))
+        elif user.role == "STAFF":
+            return redirect(url_for("staff.dashboard")) 
             
         return redirect(
-                url_for("auth.dashboard")
+                url_for("user.dashboard")
             )
 
     return render_template("auth/login.html")

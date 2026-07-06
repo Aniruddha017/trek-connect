@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+            Trek-Connect
+        {% endblock %}
+    </title>
+    
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    {% block navbar %}
+    {% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show">
+                    {{ message }}
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert">
+                        </button>
+                    </div>
+            {% endfor %}
+        </div>    
+        {% endif %}
+    {% endwith %}
+    {% block content %}
+    {% endblock %}
+    {% block footer %}
+    {% endblock %}
+    {% block script %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous">
+    </script>
+
+    <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        let counters = document.querySelectorAll(".counter");
+
+        counters.forEach(function(counter) {
+
+            let target = parseInt(counter.dataset.target);
+
+            let count = 0;
+
+            let interval = setInterval(function() {
+
+                count++;
+
+                counter.innerText = count + "+";
+
+                if(count >= target) {
+
+                    clearInterval(interval);
+                }
+
+            }, 100);
+
+        });
+
+    });
+
+    </script>
+    {% endblock %}
+</body>
+</html>

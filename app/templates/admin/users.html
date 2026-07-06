@@ -1,112 +1,89 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html>
-<head>
-    <title>Users</title>
-</head>
+{% block title %}
+Users
+{% endblock %}
 
-<body>
+{% block content %}
 
+<h1>Users</h1>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        <p>{{ category }}: {{ message }}</p>
-    {% endfor %}
-{% endwith %}
+<div class="table-responsive">
 
+<table class="table table-striped">
 
-<h2>All Users</h2>
+<tr>
 
-<table border="1">
+    <th>Name</th>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Status</th>
+    <th>Actions</th>
 
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Blacklisted</th>
-        <th>Actions</th>
-    </tr>
+</tr>
 
-    {% for user in users %}
+{% for user in users %}
 
-    <tr>
+<tr>
 
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
+    <td>{{ user.name }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.role }}</td>
 
-        <td>
-            {% if user.is_blacklisted %}
-                Yes
-            {% else %}
-                No
-            {% endif %}
-        </td>
+    <td>
 
-        <td>
+        {% if user.is_blacklisted %}
+            <span class="badge bg-danger">
+                Blacklisted
+            </span>
+        {% else %}
+            <span class="badge bg-success">
+                Active
+            </span>
+        {% endif %}
 
-            {% if user.role == "TREKKER" %}
+    </td>
 
-            <form
-                action="{{ url_for('admin.promote_to_staff', user_id=user.id) }}"
-                method="POST"
-            >
-                <button type="submit">
-                    Promote
-                </button>
-            </form>
+    <td>
 
-            {% endif %}
+        {% if user.role == "TREKKER" %}
 
+        <form method="POST"
+              action="{{ url_for('admin.promote_to_staff',
+                                 user_id=user.id) }}"
+              class="d-inline">
 
-            {% if user.role == "STAFF" %}
+            <button class="btn btn-sm btn-primary">
+                Promote
+            </button>
 
-            <form
-                action="{{ url_for('admin.demote_to_user', user_id=user.id) }}"
-                method="POST"
-            >
-                <button type="submit">
-                    Demote
-                </button>
-            </form>
+        </form>
 
-            {% endif %}
+        {% endif %}
 
+        {% if user.role == "STAFF" %}
 
-            {% if not user.is_blacklisted %}
+        <form method="POST"
+              action="{{ url_for('admin.demote_to_user',
+                                 user_id=user.id) }}"
+              class="d-inline">
 
-            <form
-                action="{{ url_for('admin.blacklist_user', user_id=user.id) }}"
-                method="POST"
-            >
-                <button type="submit">
-                    Blacklist
-                </button>
-            </form>
+            <button class="btn btn-sm btn-warning">
+                Demote
+            </button>
 
-            {% else %}
+        </form>
 
-            <form
-                action="{{ url_for('admin.whitelist_user', user_id=user.id) }}"
-                method="POST"
-            >
-                <button type="submit">
-                    Whitelist
-                </button>
-            </form>
+        {% endif %}
 
-            {% endif %}
+    </td>
 
-        </td>
+</tr>
 
-    </tr>
-
-    {% endfor %}
+{% endfor %}
 
 </table>
 
+</div>
 
-</body>
-</html>
+{% endblock %}

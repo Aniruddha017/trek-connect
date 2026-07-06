@@ -1,126 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treks</title>
-</head>
-<body>
-    
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        <p>{{ category }}: {{ message }}</p>
-    {% endfor %}
-{% endwith %}
+{% extends "base.html" %}
 
+{% block title %}
+Manage Treks
+{% endblock %}
 
-    <h2>Trek Page for Admin</h2>
+{% block content %}
 
-    <a href="{{ url_for('admin.create_trek') }}">
-        Create New Trek
+<div class="d-flex justify-content-between mb-3">
+
+    <h1>Treks</h1>
+
+    <a href="{{ url_for('admin.create_trek') }}"
+       class="btn btn-success">
+
+        Create Trek
+
     </a>
 
-    <hr>
+</div>
 
-    {% if treks %}
+<div class="table-responsive">
 
-        <ul>
+<table class="table table-striped table-hover">
+
+    <thead>
+
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Status</th>
+            <th>Slots</th>
+            <th>Actions</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
 
         {% for trek in treks %}
 
-            <li>
+        <tr>
 
-                <strong>{{ trek.name }}</strong>
+            <td>{{ trek.name }}</td>
 
-                <br>
-                Location: {{ trek.location }}
+            <td>{{ trek.location }}</td>
 
-                <br>
-                Difficulty: {{ trek.difficulty }}
+            <td>{{ trek.difficulty }}</td>
 
-                <br>
-                Slots: {{ trek.available_slots }}/{{ trek.total_slots }}
+            <td>
 
-                <br>
-                Duration: {{ trek.duration_days }} days
+                {% if trek.status == "Open" %}
+                    <span class="badge bg-success">
+                        Open
+                    </span>
 
-                <br>
-                Status: {{ trek.status}} 
-
-                <br>
-                Dates:
-                {{ trek.start_date }}
-                to
-                {{ trek.end_date }}
-
-                <br><br>
-
-                <strong>Assigned Staff:</strong>
-
-                {% if trek.assigned_staff %}
-
-                    <ul>
-
-                    {% for staff in trek.assigned_staff %}
-
-                        <li>
-                            {{ staff.name }}
-                            ({{ staff.email }})
-                        </li>
-
-                    {% endfor %}
-
-                    </ul>
+                {% elif trek.status == "Completed" %}
+                    <span class="badge bg-secondary">
+                        Completed
+                    </span>
 
                 {% else %}
-
-                    <p>No staff assigned.</p>
-
+                    <span class="badge bg-warning text-dark">
+                        {{ trek.status }}
+                    </span>
                 {% endif %}
 
-                <a href="{{ url_for('admin.assign_staff_to_trek',
-                                    trek_id=trek.id) }}">
-                    Assign Staff
-                </a>
+            </td>
 
-                |
+            <td>
+                {{ trek.available_slots }}/{{ trek.total_slots }}
+            </td>
+
+            <td>
 
                 <a href="{{ url_for('admin.edit_trek',
-                                    trek_id=trek.id) }}">
+                                    trek_id=trek.id) }}"
+                   class="btn btn-sm btn-primary">
+
                     Edit
+
                 </a>
 
-                |
-                <a href="{{ url_for('admin.trek_participants',trek_id=trek.id) }}">
-                    Participants
+                <a href="{{ url_for('admin.assign_staff_to_trek',
+                                    trek_id=trek.id) }}"
+                   class="btn btn-sm btn-warning">
+
+                    Staff
+
                 </a>
 
-                <form
-                    action="{{ url_for('admin.delete_trek',
-                                        trek_id=trek.id) }}"
-                    method="POST"
-                    style="display:inline;"
-                >
+                <form method="POST"
+                      action="{{ url_for('admin.delete_trek',
+                                         trek_id=trek.id) }}"
+                      class="d-inline">
 
-                    <button type="submit">
+                    <button type="submit"
+                            class="btn btn-sm btn-danger">
+
                         Delete
+
                     </button>
 
                 </form>
 
-            </li>
+            </td>
 
-            <hr>
+        </tr>
 
         {% endfor %}
 
-        </ul>
+    </tbody>
 
-    {% else %}
+</table>
 
-        <p>No treks found.</p>
+</div>
 
-    {% endif %}
-
-</body>
-</html>
+{% endblock %}

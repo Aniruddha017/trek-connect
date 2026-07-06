@@ -1,4 +1,8 @@
-.myenv
-instance
+/.myenv
+/instance
 __pycache__
-enhancements.md
+/enhancements.md
+/seed_data.py
+*.db
+*.logs
+app/static/uploads

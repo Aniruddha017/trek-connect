@@ -5,7 +5,9 @@ from app import db
 from datetime import datetime, timedelta, date
 from utils.decorators import allowed_roles
 from utils import constants
-
+from werkzeug.utils import secure_filename
+import os
+import uuid
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
 
@@ -13,12 +15,25 @@ def trek_is_locked(trek):
     return trek.status == "Completed"
 
 
-@admin.route('/dashboard')
+from app.models import Trek, User, Booking
+
+@admin.route("/dashboard")
 @login_required
 @allowed_roles("ADMIN")
 def dashboard():
 
-    return render_template("admin/dashboard.html")
+    total_users = User.query.count()
+    total_staff = User.query.filter_by(role="STAFF").count()
+    total_treks = Trek.query.count()
+    total_bookings = Booking.query.count()
+
+    return render_template(
+        "admin/dashboard.html",
+        total_users=total_users,
+        total_staff=total_staff,
+        total_treks=total_treks,
+        total_bookings=total_bookings
+    )
 
 
 @admin.route("/treks")
@@ -46,6 +61,15 @@ def create_trek():
         available_slots = total_slots
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
+        image = request.files.get("image")
+
+        filename = None
+
+        if image and image.filename:
+
+            filename = (f"{uuid.uuid4().hex}_"f"{secure_filename(image.filename)}")
+            image.save(os.path.join("app/static/uploads/trek_images", filename))
+        
 
 
         existing_trek = Trek.query.filter_by(name=name).first()
@@ -79,7 +103,8 @@ def create_trek():
             total_slots = total_slots,
             available_slots = available_slots,
             start_date = start_date,
-            end_date = end_date
+            end_date = end_date,
+            image_filename = filename 
         )
 
         db.session.add(trek)
@@ -102,6 +127,17 @@ def edit_trek(trek_id):
         return redirect(url_for("admin.treks"))
     
     if request.method == "POST":
+        
+        filename = trek.image_filename
+
+        image = request.files.get("image")
+
+        if image and image.filename:
+
+            filename = (f"{uuid.uuid4().hex}_"f"{secure_filename(image.filename)}")
+            image.save(os.path.join("app/static/uploads/trek_images", filename))
+
+        trek.image_filename = filename
 
         name = request.form['name'].strip()
         location = request.form['location'].strip()
@@ -171,6 +207,21 @@ def delete_trek(trek_id):
 
     if trek_is_locked(trek):
         flash("Completed Trek cannot be deleted", "danger")
+        return redirect(url_for("admin.treks"))
+    
+    
+    if trek.status != "Pending":
+        flash(
+            "Only pending treks can be deleted",
+            "danger"
+        )
+        return redirect(url_for("admin.treks"))
+
+    if trek.bookings:
+        flash(
+            "Cannot delete trek with existing bookings",
+            "danger"
+        )
         return redirect(url_for("admin.treks"))
     
     db.session.delete(trek)
@@ -300,6 +351,8 @@ def assign_staff_to_trek(trek_id):
         for staff_id in selected_staff_ids:
 
             staff = User.query.get_or_404(staff_id)
+            if staff.role != "STAFF":
+                continue
             trek.assigned_staff.append(staff)
 
         db.session.commit()

@@ -52,6 +52,7 @@ class Trek(db.Model):
     status = db.Column(db.String(20), nullable=False, default="Pending")
     assigned_staff = db.relationship("User", secondary=trek_staff, back_populates="assigned_treks")
     time_added = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    image_filename = db.Column(db.String(255), nullable=True)
 
     bookings = db.relationship("Booking", backref="trek", lazy=True)
 

@@ -1,0 +1,231 @@
+/*    GLOBAL */
+
+html{
+    scroll-behavior: smooth;
+}
+
+/* HERO SECTION  */
+
+
+.hero-section{
+
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.55),
+            rgba(0,0,0,.55)
+        ),
+        url("../images/hero.jpg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+
+
+/* FEATURED TREKS  */
+
+.featured-section{
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.80),
+            rgba(0,0,0,.80)
+        ),
+        url("../images/featured-bg.jpg");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.trek-slider{
+
+    overflow:hidden;
+    position:relative;
+}
+
+.trek-track{
+
+    display:flex;
+    gap:1.5rem;
+
+    width:max-content;
+
+    animation:scrollTreks 35s linear infinite;
+}
+
+.trek-slider:hover .trek-track{
+
+    animation-play-state:paused;
+}
+
+.trek-card{
+
+    width:300px;
+    min-height:380px;
+
+    flex-shrink:0;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    color:white;
+
+    transition:.3s ease;
+}
+
+.trek-card:hover{
+
+    transform:translateY(-10px);
+}
+
+.trek-image{
+
+    height:220px;
+
+    object-fit:cover;
+}
+
+@keyframes scrollTreks{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+/* WHY SECTION   */
+
+.why-section{
+
+    background:
+        linear-gradient(
+            180deg,
+            #151210,
+            #0c0b0a
+        );
+}
+
+.why-card{
+
+    background:rgba(255,255,255,.04);
+    transition:.3s ease;
+}
+
+.why-card:hover{
+
+    background:rgba(121,85,72,.35);
+
+    transform:translateY(-8px);
+}
+
+/*   STATISTICS  */
+
+.stats-section{
+
+    background:
+        linear-gradient(
+            180deg,
+            #0c0b0a,
+            #080706
+        );
+}
+
+.stat-box{
+
+    background:rgba(255,255,255,.05);
+
+    transition:.3s ease;
+}
+
+.stat-box:hover{
+
+    background:rgba(121,85,72,.35);
+
+    transform:translateY(-8px);
+
+}
+
+.stat-box p{
+
+    letter-spacing:1px;
+}
+
+/* CTA  */
+
+.cta-section{
+
+    background:
+        linear-gradient(
+            180deg,
+            #080706,
+            #050505
+        );
+}
+
+/* AUTH PAGES*/
+.auth-section{  
+
+    min-height:100vh;
+
+    padding:120px 0;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.75),
+            rgba(0,0,0,.75)
+        ),
+        url("../images/hero.jpg");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.auth-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    color:white;
+}
+
+.auth-card .form-control:focus{
+
+    background:rgba(255,255,255,.08);
+
+    border-color:white;  
+
+    box-shadow:none;
+}
+
+@media (max-width: 991.98px){
+
+    .navbar{
+        z-index: 1050;
+    }
+
+    .navbar-collapse{
+
+        background: rgba(20,20,20,.75);
+
+        backdrop-filter: blur(12px);
+
+        border-radius: 1rem;
+
+        padding: 1rem;
+
+        margin-top: 1rem;
+
+    }
+}

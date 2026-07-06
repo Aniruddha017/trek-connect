@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+
+<nav class="navbar navbar-expand-lg navbar-dark position-absolute top-0 start-0 w-100 py-3">
+
+    <div class="container">
+
+        <!-- Logo to be added-->
+
+        <a class="navbar-brand fw-bold fs-1 text-white" href="/">
+            TrekConnect
+        </a>
+
+        <!-- Hamburger -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <!-- Navigation -->
+
+        <div class="collapse navbar-collapse justify-content-end mt-3 mt-lg-0"
+             id="navbarNav">
+
+            <ul class="navbar-nav text-end align-items-end align-items-lg-center gap-lg-2">
+
+                <li class="nav-item mb-3 mb-lg-0">
+                    <a class="nav-link" href="/"> Home </a>
+                </li>
+
+                <li class="nav-item mb-3 mb-lg-0">
+                    <a class="nav-link" href="#"> Explore Treks </a>
+                </li>
+
+                <li class="nav-item mb-3 mb-lg-0">
+                    <a class="nav-link" href="#">About </a>
+                </li>
+
+                <li class="nav-item mb-3 mb-lg-0">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn mt-2 mt-lg-0"> Login </a>
+                </li>
+
+                <li class="nav-item mb-3 mb-lg-0">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-success btn mt-2 mt-lg-0"> Register </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;"></div>
+{% endblock %}
+
+{% block footer %}
+
+<footer class="footer-section bg-dark text-white pt-5 pb-5 pb-lg-4 mt-auto">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-4 mb-4">
+
+                <h4 class="fw-bold"> TrekConnect </h4>
+                <p>Explore India's most beautiful trekking destinations safely and confidently. </p>
+
+            </div>
+
+            <div class="col-lg-2 mb-4">
+
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled" >
+                    <li><a href="/" class="text-decoration-none text-light">Home</a></li>
+                    <li><a href="#" class="text-decoration-none text-light">Explore Treks</a></li>
+                    <li><a href="/about" class="text-decoration-none text-light">About</a></li>
+                    <li><a href="/contact" class="text-decoration-none text-light">Contact</a></li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-lg-3 mb-4">
+
+                <h5>Support</h5>
+                <ul class="list-unstyled">
+
+                    <li><a href="/faq" class="text-decoration-none text-light">FAQ</a></li>
+                    <li><a href="/terms" class="text-decoration-none text-light">Terms</a></li>
+                    <li><a href="/privacy" class="text-decoration-none text-light">Privacy</a></li>
+                    <li><a href="/safety" class="text-decoration-none text-light">Safety</a></li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-lg-3 mb-4">
+
+                <h5>Account</h5>
+                <ul class="list-unstyled">
+
+                    <li>
+                        <a href="{{ url_for('auth.login') }}"  class="text-decoration-none text-light"> Login </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('auth.register') }}"  class="text-decoration-none text-light"> Register </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="text-center">
+            &copy; 2026 TrekConnect. All Rights Reserved.
+        </div>
+    </div>
+</footer>
+
+{% endblock %}

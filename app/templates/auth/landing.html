@@ -1,0 +1,253 @@
+{% extends "auth/guest_layout.html" %}
+
+{% block title %}
+Trek-Connect 
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+
+<section class="hero-section d-flex align-items-center">
+
+    <div class="hero-overlay w-100">
+
+        <div class="container h-100">
+
+            <div class="row h-100 align-items-center">
+
+                <div class="col-lg-7 col-xl-6 text-white">
+
+                    <h1 class="display-4 fw-bold mb-4 pt-5 mt-5">
+                        Explore The Wild.
+                        <br>
+                        Create Memories.
+                    </h1>
+
+                    <p class="lead mb-4">
+                        Discover breathtaking treks across India with expert guides, safe adventures, and unforgettable experiences.
+                    </p>
+
+                    <div class="d-flex gap-3 flex-wrap">
+
+                        <a href="#featured-treks" class="btn btn-success btn-lg px-4"> Explore Treks </a>
+
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg px-4"> Register Now </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Treks -->
+
+<section id="featured-treks" class="featured-section py-5 text-white">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="display-5 fw-bold"> Featured Treks </h2>
+            <p class="text-light">Discover some of the most popular adventures waiting for you.</p>
+        </div>
+
+        <div class="trek-slider">
+
+            <div class="trek-track">
+
+                {% for _ in range(2) %}
+                {% for trek in featured_treks %}
+
+                <div class="card trek-card border-0 shadow-lg">
+
+                    {% if trek.image_filename %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/trek_images/' ~ trek.image_filename) }}"
+                        class="card-img-top trek-image"
+                        alt="{{ trek.name }}"
+                    >
+
+                    {% else %}
+
+                    <img
+                        src="{{ url_for('static', filename='images/trek-placeholder.jpg') }}"
+                        class="card-img-top trek-image"
+                        alt="{{ trek.name }}"
+                    >
+
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <span class="badge bg-success"> {{ trek.difficulty }} </span>
+
+                        <h5 class="fw-bold mt-3">{{ trek.name }} </h5>
+
+                        <p class="small text-secondary mb-2">{{ trek.location }} </p>
+
+                        <div class="d-flex justify-content-between small">
+
+                            <span>{{ trek.duration_days }} Days</span>
+
+                            <span>{{ trek.available_slots }} Slots </span>
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Why Choose Us -->
+
+<section class="why-section py-5 text-white">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="display-5 fw-bold"> Why Choose TrekConnect? </h2>
+
+            <p class="lead">Adventure made safe, simple and unforgettable. </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-4">
+
+                <div class="card why-card h-100 border-0 shadow-lg text-white">
+
+                    <div class="card-body text-center p-4">
+
+                        <i class="bi bi-signpost-2-fill display-4 mb-3"></i>
+
+                        <h4 class="fw-bold"> Expert Guides </h4>
+                        <p class="mb-0">Experienced trek leaders ensure a safe and memorable journey.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+
+                <div class="card why-card h-100 border-0 shadow-lg text-white">
+
+                    <div class="card-body text-center p-4">
+
+                        <i class="bi bi-shield-check display-4 mb-3"></i>
+
+                        <h4 class="fw-bold"> Safe Adventures</h4>
+
+                        <p class="mb-0">Verified routes, trained staff and proper trek planning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="card why-card h-100 border-0 shadow-lg text-white">
+
+                    <div class="card-body text-center p-4">
+
+                        <i class="bi bi-tree-fill display-4 mb-3"></i>
+
+                        <h4 class="fw-bold">Amazing Destinations</h4>
+
+                        <p class="mb-0">Explore breathtaking trails across India.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Statistics -->
+
+<section class="stats-section py-5 text-white">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold"> TrekConnect In Numbers</h2>
+
+        </div>
+
+        <div class="row text-center gy-4 ">
+
+            <div class="col-md-6 col-lg-3 ">
+
+                <div class="card stat-box h-100 border-0 shadow">
+
+                    <div class="card-body text-light">
+
+                        <h2 class="display-4 fw-bold counter " data-target="{{ total_treks }}"> 0+ </h2>
+                        <p class="mb-0 "> TREKS </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card stat-box h-100 border-0 shadow">
+
+                    <div class="card-body text-light">
+
+                        <h2 class="display-4 fw-bold counter" data-target="{{ total_users }}"> 0+ </h2>
+                        <p class="mb-0 "> TREKKERS </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card stat-box h-100 border-0 shadow">
+
+                    <div class="card-body text-light">
+
+                        <h2 class="display-4 fw-bold counter" data-target="{{ total_bookings }}"> 0+ </h2>
+                        <p class="mb-0 "> BOOKINGS </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card stat-box h-100 border-0 shadow">
+
+                    <div class="card-body text-white">
+
+                        <h2 class="display-4 fw-bold counter" data-target="{{ total_staff }}"> 0+ </h2>
+                        <p class="mb-0 "> GUIDES </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- CTA -->
+
+<section class="cta-section py-5 text-center text-white">
+
+    <div class="container">
+
+        <h2 class="display-5 fw-bold mb-3"> Ready For Your Next Adventure? </h2>
+        <p class="lead mb-4"> Join TrekConnect today and start exploring incredible trails.</p>
+
+        <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-4"> Register Now </a>
+    </div>
+
+</section>
+
+{% endblock %}

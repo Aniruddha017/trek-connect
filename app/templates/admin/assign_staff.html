@@ -1,48 +1,48 @@
-<h2>Assign Staff to {{ trek.name }}</h2>
+{% extends "base.html" %}
+
+{% block title %}
+Assign Staff
+{% endblock %}
+
+{% block content %}
+
+<h1>Assign Staff</h1>
+
+<h4>{{ trek.name }}</h4>
 
 <form method="POST">
 
-    <table>
+    {% for staff in staff_members %}
 
-        <tr>
-            <th>Name</th>
-            <th>Experience</th>
-            <th>Assigned</th>
-        </tr>
+    <div class="form-check mb-2">
 
-        {% for staff in staff_members %}
+        <input
+            class="form-check-input"
+            type="checkbox"
+            name="staff_ids"
+            value="{{ staff.id }}"
 
-        <tr>
+            {% if staff in trek.assigned_staff %}
+                checked
+            {% endif %}
+        >
 
-            <td>{{ staff.name }}</td>
+        <label class="form-check-label">
 
-            <td>
-                {{ staff.staff_profile.experience_years }}
-            </td>
+            {{ staff.name }}
 
-            <td>
+        </label>
 
-                <input
-                    type="checkbox"
-                    name="staff_ids"
-                    value="{{ staff.id }}"
+    </div>
 
-                    {% if staff in trek.assigned_staff %}
-                        checked
-                    {% endif %}
-                >
+    {% endfor %}
 
-            </td>
+    <button class="btn btn-success mt-3">
 
-        </tr>
-
-        {% endfor %}
-
-    </table>
-
-    <button type="submit">
         Save Assignments
+
     </button>
 
 </form>
 
+{% endblock %}
