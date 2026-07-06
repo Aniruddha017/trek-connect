@@ -26,13 +26,16 @@ def dashboard():
     total_staff = User.query.filter_by(role="STAFF").count()
     total_treks = Trek.query.count()
     total_bookings = Booking.query.count()
+    recent_bookings = (Booking.query.order_by(Booking.booking_date.desc()).limit(5).all())
+
 
     return render_template(
         "admin/dashboard.html",
         total_users=total_users,
         total_staff=total_staff,
         total_treks=total_treks,
-        total_bookings=total_bookings
+        total_bookings=total_bookings,
+        recent_bookings=recent_bookings
     )
 
 

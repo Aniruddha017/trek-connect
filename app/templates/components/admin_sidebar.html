@@ -1,0 +1,59 @@
+<div class="d-flex flex-column p-3 bg-white vh-100">
+
+    <h5 class="text-center fw-bold mb-4">
+        <i class="bi bi-map"></i> Trek-Connect
+    </h5>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.dashboard') }}"
+               class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.treks') }}"
+               class="nav-link {% if request.endpoint in ['admin.treks', 'admin.create_trek', 'admin.edit_trek', 'admin.assign_staff_to_trek', 'admin.trek_participants'] %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-signpost-2 me-2"></i>
+                Treks
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.staff') }}"
+               class="nav-link {% if request.endpoint == 'admin.staff' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-person-badge me-2"></i>
+                Staff
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.users') }}"
+               class="nav-link {% if request.endpoint in ['admin.users', 'admin.promote_to_staff', 'admin.demote_to_user', 'admin.blacklist_user', 'admin.whitelist_user'] %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-people me-2"></i>
+                Users
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.bookings') }}"
+               class="nav-link {% if request.endpoint == 'admin.bookings' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-journal-text me-2"></i>
+                Bookings
+            </a>
+        </li>
+
+    </ul>
+
+    <hr>
+
+    <a href="{{ url_for('auth.logout') }}"
+       class="btn btn-outline-danger w-100">
+        <i class="bi bi-box-arrow-right me-2"></i>
+        Logout
+    </a>
+
+</div>
