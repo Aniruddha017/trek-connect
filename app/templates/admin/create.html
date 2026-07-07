@@ -1,87 +1,233 @@
-{% extends "base.html" %}
+{% extends "base_dashboard.html" %}
 
 {% block title %}
 Create Trek
 {% endblock %}
 
-{% block content %}
+{% block sidebar %}
+    {% include "components/admin_sidebar.html" %}
+{% endblock %}
 
-<h1>Create Trek</h1>
-<form method="POST" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label>Name</label>
-        <input class="form-control"
-               name="name"
-               required>
+{% block dashboard_content %}
+
+<div class="container-fluid">
+
+    <!-- Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Create Trek
+            </h2>
+
+            <p class="text-muted mb-0">
+                Add a new trekking event to the system.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin.treks') }}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Treks
+
+        </a>
+
     </div>
 
-    <div class="mb-3">
-        <label>Location</label>
-        <input class="form-control"
-               name="location"
-               required>
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <div class="row g-4">
+
+                    <!-- Trek Name -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Trek Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            placeholder="Enter trek name"
+                            required>
+
+                    </div>
+
+                    <!-- Location -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="location"
+                            placeholder="Enter location"
+                            required>
+
+                    </div>
+
+                    <!-- Difficulty -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Difficulty
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="difficulty"
+                            required>
+
+                            <option value="" selected disabled>
+                                Select Difficulty
+                            </option>
+
+                            {% for difficulty in difficulties %}
+
+                                <option value="{{ difficulty }}">
+                                    {{ difficulty }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Duration -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Duration (Days)
+                        </label>
+
+                        <input
+                            type="number"
+                            min="1"
+                            class="form-control"
+                            name="duration_days"
+                            placeholder="Enter duration"
+                            required>
+
+                    </div>
+
+                    <!-- Total Slots -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Total Slots
+                        </label>
+
+                        <input
+                            type="number"
+                            min="1"
+                            class="form-control"
+                            name="total_slots"
+                            placeholder="Enter total slots"
+                            required>
+
+                    </div>
+
+                    <!-- Start Date -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Start Date
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="start_date"
+                            required>
+
+                    </div>
+
+                    <!-- Description -->
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-semibold">
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            name="description"
+                            placeholder="Enter trek description"></textarea>
+
+                    </div>
+
+                    <!-- Image -->
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-semibold">
+                            Trek Image
+                        </label>
+
+                        <input
+                            type="file"
+                            class="form-control"
+                            name="image"
+                            accept="image/*">
+
+                        <div class="form-text">
+                            Upload an image for this trek (optional).
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a href="{{ url_for('admin.treks') }}"
+                       class="btn btn-outline-secondary">
+
+                        Cancel
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Create Trek
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
     </div>
 
-    <div class="mb-3">
-        <label>Difficulty</label>
-
-        <select class="form-select"
-                name="difficulty">
-
-            <option>Easy</option>
-            <option>Moderate</option>
-            <option>Hard</option>
-
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label>Duration (Days)</label>
-        <input type="number"
-               class="form-control"
-               name="duration_days"
-               required>
-    </div>
-
-    <div class="mb-3">
-        <label>Total Slots</label>
-        <input type="number"
-               class="form-control"
-               name="total_slots"
-               required>
-    </div>
-
-    <div class="mb-3">
-        <label>Start Date</label>
-        <input type="date"
-               class="form-control"
-               name="start_date"
-               required>
-    </div>
-
-    <div class="mb-3">
-        <label>Description</label>
-
-        <textarea class="form-control"
-                  rows="5"
-                  name="description">
-        </textarea>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Trek Image</label>
-
-        <input
-            type="file"
-            name="image"
-            class="form-control"
-            accept="image/*"
-        >
-    </div>
-    
-    <button class="btn btn-success">
-        Create Trek
-    </button>
-
-</form>
+</div>
 
 {% endblock %}

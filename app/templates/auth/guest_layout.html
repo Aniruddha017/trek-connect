@@ -46,13 +46,56 @@
                     <a class="nav-link" href="#">About </a>
                 </li>
 
+                {% if current_user.is_authenticated %}
+
+                <li class="nav-item dropdown">
+
+                    <a class="btn btn-success dropdown-toggle mt-2 mt-lg-0"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown">
+
+                        <i class="bi bi-person-circle me-1"></i>
+                        {{ current_user.name }}
+
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a class="dropdown-item" href="{{ dashboard_url }}">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <a class="dropdown-item text-danger"
+                            href="{{ url_for('auth.logout') }}">
+                                Logout
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                {% else %}
+
                 <li class="nav-item mb-3 mb-lg-0">
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn mt-2 mt-lg-0"> Login </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-light mt-2 mt-lg-0">
+                        Login
+                    </a>
                 </li>
 
                 <li class="nav-item mb-3 mb-lg-0">
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-success btn mt-2 mt-lg-0"> Register </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-success mt-2 mt-lg-0">
+                        Register
+                    </a>
                 </li>
+
+                {% endif %}           
             </ul>
         </div>
     </div>
@@ -111,13 +154,56 @@
                 <h5>Account</h5>
                 <ul class="list-unstyled">
 
-                    <li>
-                        <a href="{{ url_for('auth.login') }}"  class="text-decoration-none text-light"> Login </a>
+                    {% if current_user.is_authenticated %}
+
+                    <li class="nav-item dropdown">
+
+                        <a class="btn btn-success dropdown-toggle mt-2 mt-lg-0"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown">
+
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ current_user.name }}
+
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <a class="dropdown-item" href="{{ dashboard_url }}">
+                                    Dashboard
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger"
+                                href="{{ url_for('auth.logout') }}">
+                                    Logout
+                                </a>
+                            </li>
+
+                        </ul>
+
                     </li>
 
-                    <li>
-                        <a href="{{ url_for('auth.register') }}"  class="text-decoration-none text-light"> Register </a>
+                    {% else %}
+
+                    <li class="nav-item mb-3 mb-lg-2">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-light mt-2 mt-lg-0">
+                            Login
+                        </a>
                     </li>
+
+                    <li class="nav-item mb-3 mb-lg-0">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-success mt-2 mt-lg-0">
+                            Register
+                        </a>
+                    </li>
+
+                    {% endif %}
                 </ul>
             </div>
         </div>

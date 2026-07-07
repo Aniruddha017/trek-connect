@@ -1,9 +1,5 @@
 <div class="d-flex flex-column p-3 bg-white vh-100">
 
-    <h5 class="text-center fw-bold mb-4">
-        <i class="bi bi-map"></i> Trek-Connect
-    </h5>
-
     <ul class="nav nav-pills flex-column mb-auto">
 
         <li class="nav-item mb-2">
@@ -45,15 +41,13 @@
                 Bookings
             </a>
         </li>
+        
+        <hr>
 
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger w-100">
+            <i class="bi bi-box-arrow-right me-2"></i>
+            Logout
+        </a>
+        
     </ul>
-
-    <hr>
-
-    <a href="{{ url_for('auth.logout') }}"
-       class="btn btn-outline-danger w-100">
-        <i class="bi bi-box-arrow-right me-2"></i>
-        Logout
-    </a>
-
 </div>

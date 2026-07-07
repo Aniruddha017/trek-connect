@@ -8,6 +8,7 @@ from utils import constants
 from werkzeug.utils import secure_filename
 import os
 import uuid
+from sqlalchemy import or_
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
 
@@ -45,15 +46,26 @@ def dashboard():
 def treks():
 
     treks = Trek.query.all()
+    
+    search = request.args.get("search", "").strip()
+    
+    query = Trek.query
+    if search != "":
+        query = query.filter(or_(Trek.name.ilike(f"%{search}%"), 
+                                 Trek.location.ilike(f"%{search}%"),
+                                 Trek.difficulty.ilike(f"%{search}%")))
+    
+    treks = query.order_by(Trek.start_date).all()
 
-    return render_template("admin/treks.html", treks=treks)
+
+    return render_template("admin/treks.html", treks=treks, constants = constants)
 
 
 @admin.route("/treks/create", methods=["GET", "POST"])
 @login_required
 @allowed_roles("ADMIN")
 def create_trek():
-     
+
     if request.method == "POST":
 
         name = request.form['name'].strip()
@@ -97,7 +109,6 @@ def create_trek():
             flash("start date cannot be in past!", "danger")
             return redirect(url_for("admin.create_trek"))
 
-        
         trek = Trek(
             name = name,
             location = location,
@@ -107,7 +118,7 @@ def create_trek():
             available_slots = available_slots,
             start_date = start_date,
             end_date = end_date,
-            image_filename = filename 
+            image_filename = filename
         )
 
         db.session.add(trek)
@@ -115,7 +126,7 @@ def create_trek():
 
         return redirect(url_for("admin.treks"))
     
-    return render_template('admin/create.html')
+    return render_template('admin/create.html', difficulties = constants.TREK_DIFFICULTIES)
 
 
 @admin.route("/treks/edit/<int:trek_id>", methods=["GET", "POST"])
@@ -148,11 +159,11 @@ def edit_trek(trek_id):
         duration_days = int(request.form['duration_days'])
         description = request.form["description"]
         total_slots = int(request.form['total_slots'])
-        available_slots = int(request.form['available_slots'])
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
         status = request.form["status"]
 
+        booked_slots = trek.total_slots - trek.available_slots
 
         existing_trek = Trek.query.filter(Trek.name==name, Trek.id!=trek.id).first()
 
@@ -168,8 +179,8 @@ def edit_trek(trek_id):
             flash("slots should be greater than 0", "danger")
             return redirect(url_for("admin.edit_trek", trek_id=trek.id))
         
-        if available_slots > total_slots or available_slots<0:
-            flash("available slot cannot be more than total slot or less than zero", "danger")
+        if total_slots < booked_slots:
+            flash(f"Total slots cannot be less than already booked slots(current bookings: {booked_slots})", "danger")
             return redirect(url_for("admin.edit_trek", trek_id=trek.id))
         
         if difficulty not in constants.TREK_DIFFICULTIES:
@@ -187,7 +198,7 @@ def edit_trek(trek_id):
         trek.duration_days = duration_days
         trek.description = description
         trek.total_slots = total_slots
-        trek.available_slots = available_slots
+        trek.available_slots = total_slots - booked_slots
         trek.start_date = start_date
         trek.end_date = end_date
         trek.status = status
@@ -198,7 +209,7 @@ def edit_trek(trek_id):
 
         return redirect(url_for("admin.treks"))
     
-    return render_template("admin/edit_trek.html", trek=trek)
+    return render_template("admin/edit_trek.html", trek=trek, difficulties=constants.TREK_DIFFICULTIES, statuses=constants.TREK_STATUSES)
 
 
 @admin.route("/treks/delete/<int:trek_id>", methods=["POST"])

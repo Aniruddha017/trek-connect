@@ -4,7 +4,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
     <div class="container-fluid">
 
-        <a class="navbar-brand fw-bold" href="#">
+        <a class="navbar-brand fw-bold" href="{{ url_for('main.home') }}">
             <i class="bi bi-map"></i> Trek-Connect
         </a>
         
@@ -63,4 +63,12 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block footer %}
+<footer class="border-top bg-white py-2">
+    <div class="container-fluid text-center text-muted small">
+        &copy; 2026 Trek-Connect
+    </div>
+</footer>
 {% endblock %}

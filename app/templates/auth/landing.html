@@ -32,7 +32,15 @@ Trek-Connect
 
                         <a href="#featured-treks" class="btn btn-success btn-lg px-4"> Explore Treks </a>
 
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg px-4"> Register Now </a>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ dashboard_url }}" class="btn btn-light btn-lg px-4">
+                                Go to Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-4">
+                                Register Now
+                            </a>
+                        {% endif %}
 
                     </div>
                 </div>

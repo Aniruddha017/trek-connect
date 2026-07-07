@@ -9,6 +9,21 @@ auth = Blueprint("auth", __name__)
 @auth.route("/register", methods=["GET", "POST"])
 def register():
 
+
+    if current_user.is_authenticated:
+        
+        flash("Already logged in", "success")
+        
+        if current_user.role == "ADMIN":
+            return redirect(url_for("admin.dashboard"))
+
+        elif current_user.role == "STAFF":
+            return redirect(url_for("staff.dashboard"))
+
+        elif current_user.role == "TREKKER":
+            return redirect(url_for("user.dashboard"))
+
+
     if request.method == "POST":
         
         name = request.form['name'].strip()
@@ -62,6 +77,19 @@ def register():
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
+    
+    if current_user.is_authenticated:
+        
+        flash("Already logged in", "success")
+        
+        if current_user.role == "ADMIN":
+            return redirect(url_for("admin.dashboard"))
+
+        elif current_user.role == "STAFF":
+            return redirect(url_for("staff.dashboard"))
+
+        elif current_user.role == "TREKKER":
+            return redirect(url_for("user.dashboard"))
 
     if request.method == "POST":
 
@@ -89,9 +117,7 @@ def login():
         elif user.role == "STAFF":
             return redirect(url_for("staff.dashboard")) 
             
-        return redirect(
-                url_for("user.dashboard")
-            )
+        return redirect(url_for("user.dashboard"))
 
     return render_template("auth/login.html")
 
@@ -100,9 +126,7 @@ def login():
 @login_required
 def dashboard():
 
-    return render_template(
-        "auth/dashboard.html"
-    )
+    return render_template("auth/dashboard.html")
 
 
 @auth.route("/logout")
@@ -111,6 +135,4 @@ def logout():
 
     logout_user()
 
-    return redirect(
-        url_for("auth.login")
-    )
+    return redirect(url_for("auth.login"))
