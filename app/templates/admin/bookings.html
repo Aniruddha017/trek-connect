@@ -1,0 +1,249 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Bookings
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/admin_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="container-fluid">
+
+    <!-- Heading -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Booking Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                View all trek bookings and their current status.
+            </p>
+
+        </div>
+
+        <span class="badge bg-primary fs-6">
+            {{ bookings|length }} Bookings
+        </span>
+
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="search"
+                        placeholder="Search by user, trek or email"
+                        value="{{ request.args.get('search', '') }}">
+
+                    <button class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Search
+                    </button>
+
+                    <a href="{{ url_for('admin.bookings') }}" class="btn btn-outline-secondary">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bookings Table -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0 text-center">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Trek</th>
+                            <th>Booking Date</th>
+                            <th>Booking Status</th>
+                            <th>Payment</th>
+                            <th>Trek Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <td>
+                                {{ booking.id }}
+                            </td>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ booking.user.name }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ booking.user.email }}
+                                </small>
+
+                            </td>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ booking.trek.name }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ booking.trek.location }}
+                                </small>
+
+                            </td>
+
+                            <td>
+                                {{ booking.booking_date.strftime("%d %b %Y") }}
+                            </td>
+
+                            <!-- Booking Status -->
+
+                            <td>
+
+                                {% if booking.status == "Booked" %}
+
+                                    <span class="badge bg-success">
+                                        Booked
+                                    </span>
+
+                                {% elif booking.status == "Cancelled" %}
+
+                                    <span class="badge bg-danger">
+                                        Cancelled
+                                    </span>
+
+                                {% elif booking.status == "Completed" %}
+
+                                    <span class="badge bg-primary">
+                                        Completed
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ booking.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- Payment -->
+
+                            <td>
+
+                                {% if booking.payment_status == "Paid" %}
+
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+
+                                {% elif booking.payment_status == "Pending" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ booking.payment_status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- Trek Status -->
+
+                            <td>
+
+                                {% if booking.trek.status == "Open" %}
+
+                                    <span class="badge bg-success">
+                                        Open
+                                    </span>
+
+                                {% elif booking.trek.status == "Closed" %}
+
+                                    <span class="badge bg-danger">
+                                        Closed
+                                    </span>
+
+                                {% elif booking.trek.status == "Completed" %}
+
+                                    <span class="badge bg-dark">
+                                        Completed
+                                    </span>
+
+                                {% elif booking.trek.status == "Ongoing" %}
+
+                                    <span class="badge bg-info text-dark">
+                                        Ongoing
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-info text-dark">
+                                        {{ booking.trek.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+
+                                <i class="bi bi-journal-check display-5 d-block mb-3 text-muted"></i>
+
+                                <h5 class="mb-2">
+                                    No Bookings Found
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    Booking records will appear here once users begin booking treks.
+                                </p>
+                                
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

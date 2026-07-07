@@ -1,89 +1,267 @@
-{% extends "base.html" %}
+{% extends "base_dashboard.html" %}
 
 {% block title %}
-Users
+Manage Users
 {% endblock %}
 
-{% block content %}
+{% block sidebar %}
+    {% include "components/admin_sidebar.html" %}
+{% endblock %}
 
-<h1>Users</h1>
+{% block dashboard_content %}
 
-<div class="table-responsive">
+<div class="container-fluid">
 
-<table class="table table-striped">
+    <!-- Heading -->
 
-<tr>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <th>Name</th>
-    <th>Email</th>
-    <th>Role</th>
-    <th>Status</th>
-    <th>Actions</th>
+        <div>
+            <h2 class="fw-bold mb-1">
+                Manage Users
+            </h2>
 
-</tr>
+            <p class="text-muted mb-0">
+                View, approve staff requests, promote, demote and manage registered users.
+            </p>
+        </div>
 
-{% for user in users %}
+        <span class="badge bg-success fs-6">
+            {{ users|length }} Users
+        </span>
 
-<tr>
+    </div>
 
-    <td>{{ user.name }}</td>
-    <td>{{ user.email }}</td>
-    <td>{{ user.role }}</td>
+    <!-- Search -->
 
-    <td>
+    <div class="card shadow-sm border-0 mb-4">
 
-        {% if user.is_blacklisted %}
-            <span class="badge bg-danger">
-                Blacklisted
-            </span>
-        {% else %}
-            <span class="badge bg-success">
-                Active
-            </span>
-        {% endif %}
+        <div class="card-body">
 
-    </td>
+            <form method="GET">
 
-    <td>
+                <div class="input-group">
 
-        {% if user.role == "TREKKER" %}
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="search"
+                        placeholder="Search by name, email or mobile..."
+                        value="{{ request.args.get('search','') }}">
 
-        <form method="POST"
-              action="{{ url_for('admin.promote_to_staff',
-                                 user_id=user.id) }}"
-              class="d-inline">
+                    <button class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Search
+                    </button>
 
-            <button class="btn btn-sm btn-primary">
-                Promote
-            </button>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+                        Reset
+                    </a>
 
-        </form>
+                </div>
 
-        {% endif %}
+            </form>
+        </div>
+    </div>
 
-        {% if user.role == "STAFF" %}
+    <!-- Users Table -->
 
-        <form method="POST"
-              action="{{ url_for('admin.demote_to_user',
-                                 user_id=user.id) }}"
-              class="d-inline">
+    <div class="card shadow-sm border-0">
 
-            <button class="btn btn-sm btn-warning">
-                Demote
-            </button>
+        <div class="card-body p-0">
 
-        </form>
+            <div class="table-responsive">
 
-        {% endif %}
+                <table class="table table-hover align-middle text-center mb-0">
 
-    </td>
+                    <thead class="table-light">
 
-</tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
 
-{% endfor %}
+                    </thead>
 
-</table>
+                    <tbody>
 
+                    {% for user in users %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ user.name }}
+                            </td>
+
+                            <td>
+                                {{ user.email }}
+                            </td>
+
+                            <td>
+                                {{ user.mobile_number }}
+                            </td>
+
+                            <!-- Role -->
+
+                            <td>
+
+                                {% if user.role == "ADMIN" %}
+
+                                    <span class="badge bg-dark">
+                                        Admin
+                                    </span>
+
+                                {% elif user.role == "STAFF" %}
+
+                                    <span class="badge bg-primary">
+                                        Staff
+                                    </span>
+
+                                {% elif user.staff_profile and user.staff_profile.approval_status == "Pending" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Staff Pending
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Trekker
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- Status -->
+
+                            <td>
+
+                                {% if user.is_blacklisted %}
+
+                                    <span class="badge bg-danger">
+                                        Blacklisted
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- Actions -->
+
+                            <td>
+
+                                {% if user.role == "ADMIN" %}
+
+                                    <span class="badge bg-secondary">
+                                        Protected
+                                    </span>
+
+                                {% else %}
+
+                                    <div class="d-flex justify-content-center flex-wrap gap-2">
+
+                                        {% if user.role == "STAFF" %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('admin.demote_to_user', user_id=user.id) }}">
+
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                    Demote
+                                                </button>
+
+                                            </form>
+
+                                        {% elif user.staff_profile and user.staff_profile.approval_status == "Pending" %}
+
+                                            <button class="btn btn-sm btn-secondary" disabled>
+                                                <i class="bi bi-hourglass-split me-1"></i>
+                                                Pending
+                                            </button>
+
+                                        {% else %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('admin.apply_for_staff', user_id=user.id) }}">
+
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                    Apply for Staff
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+                                        {% if user.is_blacklisted %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('admin.whitelist_user', user_id=user.id) }}">
+
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                    Whitelist
+                                                </button>
+
+                                            </form>
+
+                                        {% else %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('admin.blacklist_user', user_id=user.id) }}">
+
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    Blacklist
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="6" class="py-5 text-center">
+
+                                <i class="bi bi-people fs-1 text-muted d-block mb-2"></i>
+
+                                <h5>No Users Found</h5>
+
+                                <p class="text-muted mb-0">
+                                    Try changing your search criteria.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

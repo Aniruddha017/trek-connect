@@ -43,10 +43,43 @@ Register
                                 <label class="form-label text-white"> Set a new Password </label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold"> Register As </label>
+
+                                <select class="form-select" id="role" name="role">
+                                    <option value="TREKKER">
+                                        Trekker
+                                    </option>
+                                    <option value="STAFF">
+                                        Trek Staff
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div id="staffFields" style="display:none;">
+
+                                <div class="mb-3">
+                                    <label class="form-label"> Experience (Years) </label>
+                                    <input type="number" min="0" class="form-control" name="experience_years">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label"> Specialization </label>
+                                    <input type="text" class="form-control" name="specialization">
+                                </div>
+
+                                <div class="alert alert-info mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Staff registrations require administrator approval.
+                                    You will be able to log in after your request has been approved.
+                                </div>
+
+                            </div>
 
                             <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
                                 Create Account
                             </button>
+
                         </form>
 
                         <hr class="my-4">
@@ -62,4 +95,34 @@ Register
     </div>
 </section>
 
+{% endblock %}
+
+{% block script %}
+
+<script>
+
+const role = document.getElementById("role");
+const staffFields = document.getElementById("staffFields");
+
+function toggleStaffFields(){
+
+    if(role.value === "STAFF"){
+
+        staffFields.style.display = "block";
+
+    }
+
+    else{
+
+        staffFields.style.display = "none";
+
+    }
+
+}
+
+role.addEventListener("change", toggleStaffFields);
+
+toggleStaffFields();
+
+</script>
 {% endblock %}

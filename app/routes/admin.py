@@ -16,7 +16,6 @@ def trek_is_locked(trek):
     return trek.status == "Completed"
 
 
-from app.models import Trek, User, Booking
 
 @admin.route("/dashboard")
 @login_required
@@ -24,7 +23,10 @@ from app.models import Trek, User, Booking
 def dashboard():
 
     total_users = User.query.count()
-    total_staff = User.query.filter_by(role="STAFF").count()
+    total_staff = (User.query.join(StaffProfile).filter(
+        User.role == "STAFF",
+        StaffProfile.approval_status == "Approved"
+        ).count())
     total_treks = Trek.query.count()
     total_bookings = Booking.query.count()
     recent_bookings = (Booking.query.order_by(Booking.booking_date.desc()).limit(5).all())
@@ -43,10 +45,7 @@ def dashboard():
 @admin.route("/treks")
 @login_required
 @allowed_roles("ADMIN")
-def treks():
-
-    treks = Trek.query.all()
-    
+def treks():    
     search = request.args.get("search", "").strip()
     
     query = Trek.query
@@ -249,27 +248,121 @@ def delete_trek(trek_id):
 @login_required
 @allowed_roles("ADMIN")
 def users():
+    
+    search = request.args.get("search", "").strip()
+    
+    query = User.query
+    
+    if search:
+        query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                 User.email.ilike(f"%{search}%"),
+                                 User.mobile_number.ilike(f"%{search}%")))
+    
+    users = query.order_by(User.name).all()
 
-    users = User.query.order_by(User.name).all()
-
-    return render_template("admin/users.html", users=users)
+    return render_template("admin/users.html", users=users, constants=constants)
 
 
 @admin.route("/staff")
 @login_required
 @allowed_roles("ADMIN")
 def staff():
-
-    staff_members = User.query.filter_by(role="STAFF").all()
+    search = request.args.get("search", "").strip()
+    query = User.query.join(StaffProfile).filter(User.role=="STAFF", StaffProfile.approval_status == "Approved")
     
-    return render_template("admin/staff.html", staff_members=staff_members)
+    if search:
+        query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                 User.email.ilike(f"%{search}%")))
+
+    staff_members = query.order_by(User.name).all()
+
+    pending_requests = StaffProfile.query.filter_by(approval_status="Pending").count()
+
+    
+    return render_template("admin/staff.html", staff_members=staff_members, pending_requests=pending_requests)
 
 
+@admin.route("/staff/requests")
+@login_required
+@allowed_roles("ADMIN")
+def staff_requests():
+
+    search = request.args.get("search", "").strip()
+
+    query = (User.query.join(StaffProfile).filter(
+        User.role == "TREKKER",
+        StaffProfile.approval_status == "Pending"))
+
+    if search:
+        query = query.filter(or_(
+            User.name.ilike(f"%{search}%"),
+            User.email.ilike(f"%{search}%"),
+            User.mobile_number.ilike(f"%{search}%")
+        ))
+    
+    pending_staff = query.order_by(User.name).all()
+
+    return render_template("admin/staff_requests.html", pending_staff=pending_staff)
+
+
+@admin.route("/staff/<int:user_id>/approve", methods=["POST"])
+@login_required
+@allowed_roles("ADMIN")
+def approve_staff(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    if user.role != "TREKKER":
+        flash("Only trekkers' staff requests can be approved.", "danger")
+        return redirect(url_for("admin.staff_requests"))
+
+    if not user.staff_profile:
+        flash("Staff profile not found.", "danger")
+        return redirect(url_for("admin.staff_requests"))
+
+    if user.staff_profile.approval_status == "Approved":
+        flash("Staff member is already approved.", "warning")
+        return redirect(url_for("admin.staff_requests"))
+
+    user.role = "STAFF"
+    user.staff_profile.approval_status = "Approved"
+    db.session.commit()
+
+    flash(f"{user.name} has been approved as Trek Staff.", "success")
+
+    return redirect(url_for("admin.staff_requests"))
+
+@admin.route("/staff/<int:user_id>/reject", methods=["POST"])
+@login_required
+@allowed_roles("ADMIN")
+def reject_staff(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    if user.role != "TREKKER":
+        flash("Only trekkers' requests can be rejected.", "danger")
+        return redirect(url_for("admin.staff_requests"))
+
+    if not user.staff_profile:
+        flash("Staff profile not found.", "danger")
+        return redirect(url_for("admin.staff_requests"))
+
+    if user.staff_profile.approval_status == "Rejected":
+
+        flash("Staff request has already been rejected.", "warning")
+        return redirect(url_for("admin.staff_requests"))
+
+    user.staff_profile.approval_status = "Rejected"
+    db.session.commit()
+
+    flash(f"{user.name}'s staff request has been rejected.", "success")
+
+    return redirect(url_for("admin.staff_requests"))
 
 @admin.route("/users/promote/<int:user_id>", methods=["POST"])
 @login_required
 @allowed_roles("ADMIN")
-def promote_to_staff(user_id):
+def apply_for_staff(user_id):
     
     user = User.query.get_or_404(user_id)
 
@@ -277,14 +370,28 @@ def promote_to_staff(user_id):
         flash("Admin cannot be promoted", "danger")
         return redirect(url_for("admin.users"))
     
-    user.role="STAFF"
+    if user.role == "STAFF":
+        flash("User is already a staff member.", "warning")
+        return redirect(url_for("admin.users"))
+    
+    if user.is_blacklisted:
+        flash("User is blacklisted, cannot apply for staff!", "warning")
+        return redirect(url_for("admin.users"))
+    
+    if (user.staff_profile and user.staff_profile.approval_status == "Pending"):
+        flash("Staff request is already pending.", "warning")
+        return redirect(url_for("admin.users"))
 
     if not user.staff_profile:
-        profile = StaffProfile(user_id=user.id)
+        profile = StaffProfile(user_id=user.id, approval_status="Pending")
         db.session.add(profile)
+    else:
+        user.staff_profile.approval_status = "Pending"
     
     db.session.commit()
+    flash("Staff request added successfully.","success")
     return redirect(url_for("admin.users"))
+
 
 @admin.route("/users/demote/<int:user_id>", methods=["POST"])
 @login_required
@@ -306,6 +413,10 @@ def demote_to_user(user_id):
         return redirect(url_for("admin.users"))
 
     user.role = "TREKKER"
+    
+    if user.staff_profile:
+        user.staff_profile.approval_status = "Rejected"
+    
     db.session.commit()
     return redirect(url_for("admin.users"))
 
@@ -374,9 +485,14 @@ def assign_staff_to_trek(trek_id):
         flash("Staff assignments updated!", "success")
 
         return redirect(url_for("admin.treks"))
+    
 
-    staff_members = User.query.filter_by(role="STAFF", is_blacklisted=False).all()
-
+    staff_members = (User.query.join(StaffProfile).filter(
+        User.role == "STAFF",
+        User.is_blacklisted == False,
+        StaffProfile.approval_status == "Approved"
+        ).all())
+    
     return render_template("admin/assign_staff.html", trek=trek, staff_members=staff_members)
 
 @admin.route("/treks/<int:trek_id>/participants")
@@ -393,6 +509,16 @@ def trek_participants(trek_id):
 @allowed_roles("ADMIN")
 def bookings():
 
-    bookings = Booking.query.all()
+    search = request.args.get("search", "").strip()
+    query = Booking.query.join(User).join(Trek)
+
+    if search:
+        query = query.filter(or_(
+            User.name.ilike(f"%{search}%"),
+            User.email.ilike(f"%{search}%"),
+            Trek.name.ilike(f"%{search}%")
+        ))
+
+    bookings = query.order_by(Booking.booking_date.desc()).all()
 
     return render_template("admin/bookings.html",bookings=bookings)

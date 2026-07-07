@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db 
-from app.models import User 
+from app.models import User, StaffProfile
 
 auth = Blueprint("auth", __name__)
 
@@ -30,6 +30,9 @@ def register():
         email = request.form['email'].strip().lower()
         mobile_number = request.form['mobile_number'].strip()
         password = request.form['password']
+        role = request.form["role"]
+        experience_years = int(request.form.get("experience_years") or 0)
+        specialization = request.form.get("specialization", "").strip()
 
         if not all([name, email, password, mobile_number]):
             flash("All fields are required to be filled!", "danger")
@@ -45,6 +48,10 @@ def register():
 
         if len(password) < 6:
             flash("Enter a longer password", "danger")
+            return redirect(url_for("auth.register"))
+        
+        if role not in ("TREKKER", "STAFF"):
+            flash("Invalid role selected!", "danger")
             return redirect(url_for("auth.register"))
 
         existing_user = User.query.filter(
@@ -65,10 +72,22 @@ def register():
         )
 
         db.session.add(user)
+        db.session.flush()
+
+        if role == "STAFF":
+            profile = StaffProfile(
+                user_id=user.id,
+                experience_years=experience_years,
+                specialization=specialization,
+                approval_status="Pending"
+            )
+            db.session.add(profile)
         db.session.commit()
 
-        flash("Registration Successful! Please Login", "success")
-
+        if role == "STAFF":
+            flash("Registration successful. Your staff application has been submitted. You can use Trekker features while your application is under review.", "success")
+        else:
+            flash("Registration successful! Please login.", "success")
         return redirect(url_for('auth.login'))
     
     return render_template("auth/register.html")
@@ -105,11 +124,11 @@ def login():
         if user.is_blacklisted:
             flash("User is deactivated!", "danger")
             return redirect(url_for("auth.login"))
-        
+           
         if not check_password_hash(user.password_hash, password):
             flash("Incorrect email or password", "danger")
             return redirect(url_for("auth.login"))
-        
+
         login_user(user)
 
         if user.role == "ADMIN":
@@ -120,13 +139,6 @@ def login():
         return redirect(url_for("user.dashboard"))
 
     return render_template("auth/login.html")
-
-
-@auth.route("/dashboard")
-@login_required
-def dashboard():
-
-    return render_template("auth/dashboard.html")
 
 
 @auth.route("/logout")

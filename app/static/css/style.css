@@ -207,6 +207,8 @@ html{
     border-color:white;  
 
     box-shadow:none;
+    
+    color: white;
 }
 
 @media (max-width: 991.98px){

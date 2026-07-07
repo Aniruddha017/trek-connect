@@ -1,23 +1,232 @@
-<h1>{{ trek.name }}</h1>
+{% extends "base_dashboard.html" %}
 
-<table border="1">
+{% block title %}
+Trek Participants
+{% endblock %}
 
-<tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Status</th>
-    <th>Payment</th>
-</tr>
+{% block sidebar %}
+    {% include "components/admin_sidebar.html" %}
+{% endblock %}
 
-{% for booking in trek.bookings %}
+{% block dashboard_content %}
 
-<tr>
-    <td>{{ booking.user.name }}</td>
-    <td>{{ booking.user.email }}</td>
-    <td>{{ booking.status }}</td>
-    <td>{{ booking.payment_status }}</td>
-</tr>
+<div class="container-fluid">
 
-{% endfor %}
+    <!-- Heading -->
 
-</table>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Trek Participants
+            </h2>
+
+            <p class="text-muted mb-0">
+                Registered participants for <strong>{{ trek.name }}</strong>.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Treks
+        </a>
+
+    </div>
+
+    <!-- Trek Summary -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row text-center">
+
+                <div class="col-md-3">
+
+                    <small class="fw-bold d-block">
+                        Trek
+                    </small>
+
+                    <h6 class="mb-0">
+                        {{ trek.name }}
+                    </h6>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="fw-bold d-block">
+                        Location
+                    </small>
+
+                    <h6 class="mb-0">
+                        {{ trek.location }}
+                    </h6>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="fw-bold d-block">
+                        Status
+                    </small>
+
+                    <span class="badge bg-success">
+                        {{ trek.status }}
+                    </span>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <small class="fw-bold d-block">
+                        Participants
+                    </small>
+
+                    <span class="badge bg-primary fs-6">
+                        {{ trek.bookings|length }}
+                    </span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participants Table -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0 text-center">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Booking Date</th>
+                            <th>Booking Status</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for booking in trek.bookings %}
+
+                        <tr>
+
+                            <td>
+                                {{ loop.index }}
+                            </td>
+
+                            <td class="fw-semibold">
+                                {{ booking.user.name }}
+                            </td>
+
+                            <td>
+                                {{ booking.user.email }}
+                            </td>
+
+                            <td>
+                                {{ booking.user.mobile_number }}
+                            </td>
+
+                            <td>
+                                {{ booking.booking_date.strftime("%d %b %Y") }}
+                            </td>
+
+                            <!-- Booking Status -->
+
+                            <td>
+                                {% if booking.status == "Booked" %}
+
+                                    <span class="badge bg-success">
+                                        Booked
+                                    </span>
+
+                                {% elif booking.status == "Cancelled" %}
+
+                                    <span class="badge bg-danger">
+                                        Cancelled
+                                    </span>
+
+                                {% elif booking.status == "Completed" %}
+
+                                    <span class="badge bg-primary">
+                                        Completed
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ booking.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- Payment -->
+
+                            <td>
+
+                                {% if booking.payment_status == "Paid" %}
+
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+
+                                {% elif booking.payment_status == "Pending" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ booking.payment_status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="7" class="text-center py-5">
+
+                                <i class="bi bi-people display-4 text-muted d-block mb-3"></i>
+
+                                <h5 class="mb-2">
+                                    No Participants Yet
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    No users have booked this trek.
+                                </p>
+
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

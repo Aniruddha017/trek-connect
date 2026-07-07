@@ -31,9 +31,11 @@ class StaffProfile(db.Model):
     __tablename__ = "staff_profiles"
 
     id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
     experience_years = db.Column(db.Integer, default=0)
     specialization = db.Column(db.String(100))
+    approval_status = db.Column(db.String(20), default="Pending", nullable=False)
 
 
 class Trek(db.Model):
