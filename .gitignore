@@ -4,5 +4,6 @@ __pycache__
 /enhancements.md
 /seed_data.py
 *.db
-*.logs
+*.log
 app/static/uploads
+app/static/profile_images

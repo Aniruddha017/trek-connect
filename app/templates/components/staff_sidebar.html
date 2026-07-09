@@ -1,0 +1,57 @@
+{% set unread_count = current_user.notifications|selectattr("is_read", "equalto", False)|list|length %}
+
+<div class="d-flex flex-column p-3 bg-white vh-100">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('staff.dashboard') }}" class="nav-link {% if request.endpoint == 'staff.dashboard' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('staff.my_treks') }}" class="nav-link {% if request.endpoint in ['staff.trek_details', 'staff.my_treks', 'staff.participants'] %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-signpost-2 me-2"></i>
+                My Treks
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url_for('staff.notifications') }}" class="nav-link {% if request.endpoint in ['staff.notifications'] %}active{% else %}link-dark{% endif %}" >
+                <i class="bi bi-bell me-2"></i>
+                Notifications
+                {% if unread_count > 0 %}
+                    <span class="badge bg-danger ms-2">
+                        {{ unread_count }}
+                    </span>
+                {% endif %}
+            </a>
+        </li>
+
+        <hr>
+        <hr>
+        <div class="card border-success mb-3">
+
+            <div class="card-body text-center">
+
+                <div class="text-success fw-bold mb-2">
+                    Staff Mode
+                </div>
+
+                <p class="small text-muted mb-3">Switch to trekker mode</p>
+
+                <a href="{{ url_for('user.dashboard') }}" class="btn btn-success btn-sm w-100">
+                    <i class="bi bi-arrow-left-right me-2"></i>
+                    Trekker Dashboard
+                </a>
+            </div>
+        </div>
+
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger w-100">
+            <i class="bi bi-box-arrow-right me-2"></i>
+            Logout
+        </a>
+    </ul>
+</div>

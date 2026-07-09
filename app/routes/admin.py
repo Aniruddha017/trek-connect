@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
-from app.models import Trek, User, StaffProfile, Booking
+from flask_login import login_required, current_user
+from app.models import Trek, User, StaffProfile, Booking, StaffNotification
 from app import db
 from datetime import datetime, timedelta, date
 from utils.decorators import allowed_roles
 from utils import constants
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
 import os
 import uuid
 from sqlalchemy import or_
@@ -76,12 +77,21 @@ def create_trek():
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
         image = request.files.get("image")
+        price = float(request.form['price'])
 
         filename = None
 
         if image and image.filename:
 
             filename = (f"{uuid.uuid4().hex}_"f"{secure_filename(image.filename)}")
+            
+            extension = filename.rsplit(".", 1)[1].lower()
+
+            if extension not in ["jpg", "jpeg", "png"]:
+                flash("Only JPG and PNG images are allowed.", "danger")
+                return redirect(url_for("admin.create_trek"))
+
+
             image.save(os.path.join("app/static/uploads/trek_images", filename))
         
 
@@ -107,6 +117,10 @@ def create_trek():
         if start_date < date.today():
             flash("start date cannot be in past!", "danger")
             return redirect(url_for("admin.create_trek"))
+        
+        if price < 0:
+            flash("Price cannot be negative.", "danger")
+            return redirect(request.url)
 
         trek = Trek(
             name = name,
@@ -117,6 +131,7 @@ def create_trek():
             available_slots = available_slots,
             start_date = start_date,
             end_date = end_date,
+            price=price,
             image_filename = filename
         )
 
@@ -148,6 +163,12 @@ def edit_trek(trek_id):
         if image and image.filename:
 
             filename = (f"{uuid.uuid4().hex}_"f"{secure_filename(image.filename)}")
+                        
+            extension = filename.rsplit(".", 1)[1].lower()
+            if extension not in ["jpg", "jpeg", "png"]:
+                flash("Only JPG and PNG images are allowed.", "danger")
+                return redirect(url_for("admin.edit_trek", trek_id=trek.id))
+
             image.save(os.path.join("app/static/uploads/trek_images", filename))
 
         trek.image_filename = filename
@@ -161,6 +182,7 @@ def edit_trek(trek_id):
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
         status = request.form["status"]
+        price = float(request.form["price"])
 
         booked_slots = trek.total_slots - trek.available_slots
 
@@ -189,6 +211,10 @@ def edit_trek(trek_id):
         if status not in constants.TREK_STATUSES:
             flash("Invalid trek status", "danger")
             return redirect(url_for("admin.edit_trek", trek_id=trek.id))
+        
+        if price < 0:
+            flash("Price cannot be negative.", "danger")
+            return redirect(request.url)
 
 
         trek.name = name
@@ -201,6 +227,7 @@ def edit_trek(trek_id):
         trek.start_date = start_date
         trek.end_date = end_date
         trek.status = status
+        trek.price = price
 
         db.session.commit()
 
@@ -471,6 +498,8 @@ def assign_staff_to_trek(trek_id):
 
         selected_staff_ids = set(map(int, request.form.getlist("staff_ids")))
 
+        old_staff = list(trek.assigned_staff)
+
         trek.assigned_staff.clear()
 
         for staff_id in selected_staff_ids:
@@ -479,6 +508,14 @@ def assign_staff_to_trek(trek_id):
             if staff.role != "STAFF":
                 continue
             trek.assigned_staff.append(staff)
+
+        all_staff = set(old_staff + trek.assigned_staff)
+
+        for staff in all_staff:
+            db.session.add(
+                StaffNotification(staff_id=staff.id,
+                                  message=f"Assignment for '{trek.name}' has been updated by the administrator. Please check if you were removed or new staff was added")
+            )
 
         db.session.commit()
 
@@ -522,3 +559,63 @@ def bookings():
     bookings = query.order_by(Booking.booking_date.desc()).all()
 
     return render_template("admin/bookings.html",bookings=bookings)
+
+
+@admin.route("/profile", methods=["GET", "POST"])
+@login_required
+@allowed_roles("ADMIN")
+def profile():
+
+    if request.method == "POST":
+
+        name = request.form["name"].strip()
+        mobile_number = request.form["mobile_number"].strip()
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if not name:
+            flash("Name cannot be empty.", "danger")
+            return redirect(url_for("admin.profile"))
+
+        if not mobile_number:
+            flash("Mobile number is required.", "danger")
+            return redirect(url_for("admin.profile"))
+
+        if not mobile_number.isdigit():
+            flash("Only numbers allowed in mobile number.", "danger")
+            return redirect(url_for("admin.profile"))
+
+        if len(mobile_number) < 8:
+            flash("Mobile number is too short.", "danger")
+            return redirect(url_for("admin.profile"))
+
+        existing_user = User.query.filter(
+            User.mobile_number == mobile_number,
+            User.id != current_user.id
+        ).first()
+
+        if existing_user:
+            flash("Mobile number already exists.", "danger")
+            return redirect(url_for("admin.profile"))
+
+        current_user.name = name
+        current_user.mobile_number = mobile_number
+
+        if password:
+
+            if len(password) < 6:
+                flash("Password must be at least 6 characters.", "danger")
+                return redirect(url_for("admin.profile"))
+
+            if password != confirm_password:
+                flash("Passwords do not match.", "danger")
+                return redirect(url_for("admin.profile"))
+
+            current_user.password_hash = generate_password_hash(password)
+
+        db.session.commit()
+
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for("admin.profile"))
+
+    return render_template("admin/profile.html")

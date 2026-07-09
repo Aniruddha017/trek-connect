@@ -1,0 +1,124 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/user_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">My Profile</h2>
+        <p class="text-muted mb-0"> Update your personal information </p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-person-circle me-2"></i>
+        User Profile
+    </div>
+
+    <div class="card-body">
+        
+        <!-- autocomplete off for password field getting autofilled by browser -->
+        <form method="POST" autocomplete="off">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="{{ current_user.name }}"
+                        required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input
+                        type="email"
+                        class="form-control"
+                        value="{{ current_user.email }}"
+                        disabled>
+                    <small class="text-muted"> Email cannot be changed. Contact support for help</small>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    <input
+                        type="text"
+                        name="mobile_number"
+                        class="form-control"
+                        value="{{ current_user.mobile_number }}"
+                        required>
+                </div>
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">
+                Change Password
+            </h5>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        autocomplete="new-password"
+                        placeholder="Leave blank to keep current password">
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Save Changes
+                </button>
+
+                <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary ms-2">
+                    Cancel
+                </a>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Trek History
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/user_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">Trek History</h2>
+        <p class="text-muted mb-0"> View your completed and cancelled trekking history. </p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-clock-history me-2"></i>
+        Trekking History
+    </div>
+
+    <div class="card-body">
+
+        {% if bookings %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Trek</th>
+                        <th>Location</th>
+                        <th>Booking Date</th>
+                        <th>Payment Status</th>
+                        <th>Booking Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for booking in bookings %}
+
+                    <tr>
+
+                        <td>{{ booking.trek.name }}</td>
+                        <td>{{ booking.trek.location }}</td>
+                        <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                        <td>
+
+                            {% if booking.payment_status == "Paid" %}
+                                <span class="badge bg-success">
+                                    {{ booking.payment_status }}
+                                </span>
+
+                            {% elif booking.payment_status == "Pending" %}
+                                <span class="badge bg-warning text-dark">
+                                    {{ booking.payment_status }}
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ booking.payment_status }}
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if booking.status == "Completed" %}
+                                <span class="badge bg-success">
+                                    {{ booking.status }}
+                                </span>
+
+                            {% elif booking.status == "Cancelled" %}
+                                <span class="badge bg-danger">
+                                    {{ booking.status }}
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ booking.status }}
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{{ url_for('user.trek_details', trek_id=booking.trek.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>
+                                View Trek
+                            </a>
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+
+            <i class="bi bi-clock-history display-1 text-muted"></i>
+
+            <h4 class="mt-3"> No Trek History </h4>
+            <p class="text-muted"> Your completed and cancelled treks will appear here. </p>
+
+            <a href="{{ url_for('user.treks') }}" class="btn btn-primary mt-2">
+                Explore Treks
+            </a>
+
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

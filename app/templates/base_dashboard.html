@@ -24,7 +24,22 @@
                 </li>
 
                 <li><hr class="dropdown-divider"></li>
+                
+                <li>
+                    {% if current_user.role == "ADMIN" %}
+                        {% set profile_url = url_for("admin.profile") %}
+                    {% elif current_user.role == "STAFF" %}
+                        {% set profile_url = url_for("staff.profile") %}
+                    {% else %}
+                        {% set profile_url = url_for("user.profile") %}
+                    {% endif %}
 
+                    <a class="dropdown-item" href="{{ profile_url }}">
+                        <i class="bi bi-person"></i>
+                        Edit Profile
+                    </a>                    
+                </li>
+                
                 <li>
                     <a class="dropdown-item"
                        href="{{ url_for('auth.logout') }}">

@@ -1,0 +1,82 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Apply as Trek Staff
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/user_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">Apply as Trek Staff</h2>
+        <p class="text-muted mb-0"> Submit your details for staff approval.</p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-person-badge me-2"></i>
+        Staff Application
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Experience (Years)
+                </label>
+
+                <input
+                    type="number"
+                    name="experience_years"
+                    class="form-control"
+                    min="0"
+                    value="{{ profile.experience_years if profile else 0 }}"
+                    required>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Specialization
+                </label>
+
+                <input
+                    type="text"
+                    name="specialization"
+                    class="form-control"
+                    placeholder="Mountain Guide, First Aid, Rescue Operations..."
+                    value="{{ profile.specialization if profile else '' }}"
+                    required>
+
+            </div>
+
+            <div class="alert alert-info">
+                <p><strong>Note:</strong> Your application will be reviewed by the administrator. You can continue using Trekker features while your application is under review.</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send-check me-2"></i>
+                Submit Application
+            </button>
+
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary ms-2">
+                Cancel
+            </a>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

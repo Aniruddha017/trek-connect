@@ -1,0 +1,196 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/staff_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">My Profile</h2>
+        <p class="text-muted mb-0">
+            Update your personal information
+        </p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-person-circle me-2"></i>
+        Staff Profile
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="{{ current_user.name }}"
+                        required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input
+                        type="email"
+                        class="form-control"
+                        value="{{ current_user.email }}"
+                        disabled>
+                    <small class="text-muted">
+                        Email cannot be changed.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    <input
+                        type="text"
+                        name="mobile_number"
+                        class="form-control"
+                        value="{{ current_user.mobile_number }}"
+                        required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Experience (Years)</label>
+                    <input
+                        type="number"
+                        name="experience_years"
+                        class="form-control"
+                        min="0"
+                        value="{{ profile.experience_years }}"
+                        required>
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">Specialization</label>
+                <input
+                    type="text"
+                    name="specialization"
+                    class="form-control"
+                    value="{{ profile.specialization or '' }}"
+                    placeholder="Mountain Guide, First Aid, Rescue Operations...">
+
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3"> Change Password </h5>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Leave blank to keep current password">
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Profile Picture
+                    </label>
+
+                    <input
+                        type="file"
+                        name="profile_image"
+                        class="form-control"
+                        accept=".jpg,.jpeg,.png">
+
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Approval Status
+                    </label>
+
+                    <div>
+
+                        {% if profile.approval_status == "Approved" %}
+
+                            <span class="badge bg-success fs-6">
+                                {{ profile.approval_status }}
+                            </span>
+
+                        {% elif profile.approval_status == "Pending" %}
+
+                            <span class="badge bg-warning text-dark fs-6">
+                                {{ profile.approval_status }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger fs-6">
+                                {{ profile.approval_status }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Save Changes
+                </button>
+
+                <a href="{{ url_for('staff.dashboard') }}" class="btn btn-secondary ms-2">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

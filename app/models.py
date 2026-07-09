@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False)
     is_blacklisted = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     bookings = db.relationship("Booking", backref="user", lazy=True)
     staff_profile = db.relationship("StaffProfile", backref="user", uselist=False)
@@ -31,11 +31,13 @@ class StaffProfile(db.Model):
     __tablename__ = "staff_profiles"
 
     id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    created_at = db.Column(db.DateTime, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
     experience_years = db.Column(db.Integer, default=0)
     specialization = db.Column(db.String(100))
     approval_status = db.Column(db.String(20), default="Pending", nullable=False)
+    profile_image = db.Column(db.String(255), nullable=True)
+
 
 
 class Trek(db.Model):
@@ -53,8 +55,9 @@ class Trek(db.Model):
     end_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="Pending")
     assigned_staff = db.relationship("User", secondary=trek_staff, back_populates="assigned_treks")
-    time_added = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    time_added = db.Column(db.DateTime, default=datetime.now)
     image_filename = db.Column(db.String(255), nullable=True)
+    price = db.Column(db.Float, nullable=False)
 
     bookings = db.relationship("Booking", backref="trek", lazy=True)
 
@@ -64,7 +67,18 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     trek_id = db.Column(db.Integer, db.ForeignKey("treks.id"), nullable=False)
-    booking_date = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    booking_date = db.Column(db.DateTime, default=datetime.now)
     status = db.Column(db.String(20), default="Booked")
     payment_status = db.Column(db.String(20), default="Pending")
 
+
+class StaffNotification(db.Model):
+    __tablename__ = "staff_notifications"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    staff_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime,default=datetime.now)
+    is_read = db.Column(db.Boolean, default=False)
+    staff = db.relationship("User", backref="notifications")

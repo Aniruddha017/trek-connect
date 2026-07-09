@@ -1,0 +1,187 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Payment
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/user_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">
+            <p>
+                <i class="bi bi-credit-card me-2"></i>
+                Trek Payment
+            </p>
+        </h2>
+
+        <p class="text-muted mb-0">
+            Complete your payment to confirm your booking.
+        </p>
+    </div>
+
+    <a href="{{ url_for('user.trek_details', trek_id=trek.id) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back
+    </a>
+</div>
+
+<div class="row">
+
+    <!-- Summary -->
+    <div class="col-lg-5 mb-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header bg-dark text-white">
+                <p>
+                    <i class="bi bi-signpost-2 me-2"></i>
+                    Trek Summary
+                </p>
+            </div>
+
+            <div class="card-body">
+
+                <h4 class="fw-bold">
+                    {{ trek.name }}
+                </h4>
+                <hr>
+
+                <p>
+                    <strong>Location:</strong>
+                    {{ trek.location }}
+                </p>
+
+                <p>
+                    <strong>Difficulty:</strong>
+                    {{ trek.difficulty }}
+                </p>
+
+                <p>
+                    <strong>Duration:</strong>
+                    {{ trek.duration_days }} Days
+                </p>
+
+                <p>
+                    <strong>Start Date:</strong>
+                    {{ trek.start_date }}
+                </p>
+
+                <hr>
+
+                <h3 class="text-success fw-bold">
+
+                    ₹ {{ trek.price }}
+
+                </h3>
+
+                <small class="text-muted"> Total Amount </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Payment Form -->
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header bg-primary text-white">
+                <p>
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Payment Details
+                </p>
+                
+            </div>
+
+            <div class="card-body">
+
+                <form method="POST">
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Select Payment Method
+                        </label>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="UPI"
+                                   id="upi">
+
+                            <label class="form-check-label" for="upi">
+                                UPI
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="Debit Card"
+                                   id="debit">
+
+                            <label class="form-check-label" for="debit">
+                                Debit Card
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="Credit Card"
+                                   id="credit">
+
+                            <label class="form-check-label" for="credit">
+                                Credit Card
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="Net Banking"
+                                   id="netbanking">
+
+                            <label class="form-check-label" for="netbanking">
+                                Net Banking
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid">
+
+                        <button class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Pay {{ trek.price }}                            
+                        </button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,40 +1,107 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Staff Dashboard</title>
-</head>
-<body>
+{% extends "base_dashboard.html" %}
 
-    <h1>Staff Dashboard</h1>
+{% block title %}
+Staff Dashboard
+{% endblock %}
 
-    <h3>Assigned Treks</h3>
+{% block sidebar %}
+    {% include "components/staff_sidebar.html" %}
+{% endblock %}
 
-    {% if treks %}
+{% block dashboard_content %}
 
-        <ul>
-        {% for trek in treks %}
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-            <li>
-                <strong>{{ trek.name }}</strong>
-                |
-                Status: {{ trek.status }}
-                |
-                Participants: {{ trek.bookings|length }}
+    <div>
+        <h2 class="fw-bold">Staff Dashboard</h2>
+        <p class="text-muted mb-0"> Welcome, {{ current_user.name }} </p>
+    </div>
 
-                <a href="{{ url_for('staff.trek_details',trek_id=trek.id) }}">
-                    Manage
-                </a>
+</div>
 
-            </li>
+<!-- Summary Cards -->
+<div class="row g-4 mb-4">
 
-        {% endfor %}
-        </ul>
+    <div class="col-md-6">
 
-    {% else %}
+        <div class="card shadow-sm border-0 text-center">
 
-        <p>No treks assigned.</p>
+            <div class="card-body">
+                <i class="bi bi-signpost-2 display-5 text-primary"></i>
+                <h5 class="mt-3"> Assigned Treks </h5>
+                <h2 class="fw-bold"> {{ trek_count }} </h2>
 
-    {% endif %}
+            </div>
+        </div>
 
-</body>
-</html>
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="card shadow-sm border-0 text-center">
+
+            <div class="card-body">
+                <i class="bi bi-people display-5 text-success"></i>
+                <h5 class="mt-3"> Registered Participants </h5>
+                <h2 class="fw-bold"> {{ participants_count }} </h2>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Staff Guidelines -->
+<div class="card shadow-sm">
+
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-info-circle me-2"></i>
+        Staff Guidelines
+    </div>
+
+    <div class="card-body">
+
+        <div class="list-group list-group-flush">
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Manage only the treks assigned to you.
+            </div>
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Keep trek status updated (Open, Closed, Ongoing).
+            </div>
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Verify participant details before the trek begins.
+            </div>
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Update available slots whenever required.
+            </div>
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Mark a trek as <strong>Completed</strong> only after its end date.
+            </div>
+
+            <div class="list-group-item border-0 px-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                Contact the administrator if you require changes to trek assignments.
+            </div>
+
+        </div>
+
+        <hr>
+        <div class="text-end">
+            <a href="{{ url_for('staff.my_treks') }}" class="btn btn-primary">
+                <i class="bi bi-signpost-2 me-2"></i>
+                Manage My Treks
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

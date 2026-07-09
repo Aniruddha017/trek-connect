@@ -1,0 +1,100 @@
+<div class="d-flex flex-column p-3 bg-white vh-100">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('user.dashboard') }}" class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('user.treks') }}" class="nav-link {% if request.endpoint in ['user.treks', 'user.trek_details'] %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-signpost-2 me-2"></i>
+                Available Treks
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('user.bookings') }}" class="nav-link {% if request.endpoint == 'user.bookings' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-journal-check me-2"></i>
+                My Bookings
+            </a>
+        </li>
+
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('user.history') }}" class="nav-link {% if request.endpoint == 'user.history' %}active{% else %}link-dark{% endif %}">
+                <i class="bi bi-clock-history me-2"></i>
+                Trek History
+            </a>
+        </li>
+        
+        <hr>
+        <hr>
+
+        {% if current_user.staff_profile is none %}
+
+        <div class="card border-0 bg-light mb-3">
+
+            <div class="card-body text-center">
+
+                <h6 class="fw-bold"> Become Trek Staff</h6>
+                <p class="small text-muted">
+                    Apply to become a trek staff member.
+                </p>
+
+                <a href="{{ url_for('user.apply_staff') }}" class="btn btn-primary btn-sm w-100">
+                    Apply Now
+                </a>
+            </div>
+
+        </div>
+
+        {% elif current_user.staff_profile.approval_status == "Pending" %}
+
+        <div class="alert alert-warning text-center py-2">
+            <strong>Application Pending</strong>
+        </div>
+
+        {% elif current_user.staff_profile.approval_status == "Rejected" %}
+
+        <div class="card border-danger mb-3">
+
+            <div class="card-body text-center">
+
+                <div class="text-danger fw-bold mb-2">
+                    Application Rejected
+                </div>
+                <a href="{{ url_for('user.apply_staff') }}" class="btn btn-outline-danger btn-sm w-100">
+                    Apply Again
+                </a>
+            </div>
+
+        </div>
+
+        {% elif current_user.role == "STAFF" %}
+
+        <div class="card border-success mb-3">
+
+            <div class="card-body text-center">
+
+                <div class="text-success fw-bold mb-2">
+                    Staff Approved
+                </div>
+
+                <a href="{{ url_for('staff.dashboard') }}" class="btn btn-success btn-sm w-100">
+                    Staff Dashboard
+                </a>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger w-100">
+            <i class="bi bi-box-arrow-right me-2"></i>
+            Logout
+        </a>
+    </ul>
+
+</div>

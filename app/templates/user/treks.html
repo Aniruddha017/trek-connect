@@ -1,0 +1,168 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Available Treks
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/user_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold">Available Treks</h2>
+        <p class="text-muted mb-0"> Browse and book your next trekking adventure.</p>
+    </div>
+
+
+    <a href="{{ url_for('user.trending_treks') }}" class="btn btn-warning me-2">
+        <i class="bi bi-fire"></i>
+        Trending Treks
+    </a>
+
+</div>
+
+    <!-- Search -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search trek by name, location or difficulty"
+                        name="search"
+                        value="{{ request.args.get('search','') }}">
+
+                    <select class="form-select" name="difficulty">
+
+                        <option value="">All Difficulties</option>
+
+                        {% for diff in difficulties %}
+                            <option value="{{ diff }}"
+                                {% if request.args.get('difficulty') == diff %}selected{% endif %}>
+                                {{ diff }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+
+                    <button class="btn btn-success">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </button>
+
+                    <a href="{{ url_for('user.treks') }}" class="btn btn-outline-dark"> Reset </a>
+                
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% if treks %}
+
+<div class="row g-4">
+
+    {% for trek in treks %}
+
+    <div class="col-lg-4 col-md-6">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="ratio ratio-4x3">
+
+                {% if trek.image_filename %}
+
+                <img src="{{ url_for('static', filename='uploads/trek_images/' ~ trek.image_filename) }}"
+                    class="card-img-top w-100 h-100 object-fit-cover"
+                    alt="{{ trek.name }}">
+                {% else %}
+                
+                <img src="{{ url_for('static', filename='images/trek-placeholder.jpg') }}"
+                    class="card-img-top w-100 h-100 object-fit-cover"
+                    alt="{{ trek.name }}">
+    
+                {% endif %}
+
+            </div>
+
+            <div class="card-body d-flex flex-column">
+
+                <h5 class="card-title"> {{ trek.name }} </h5>
+
+                <p class="text-muted mb-2">
+                    <i class="bi bi-geo-alt"></i>
+                    {{ trek.location }}
+                </p>
+
+                <p class="mb-2">
+                    <span class="badge border border-success text-success">
+                        {{ trek.difficulty }}
+                    </span>
+                </p>
+
+                <ul class="list-group list-group-flush mb-3">
+
+                    <li class="list-group-item px-0">
+                        <strong>Duration:</strong>
+                        {{ trek.duration_days }} Days
+                    </li>
+
+                    <li class="list-group-item px-0">
+                        <strong>Available Slots:</strong>
+                        {{ trek.available_slots }}
+                    </li>
+
+                    <li class="list-group-item px-0">
+                        <strong>Start:</strong>
+                        {{ trek.start_date }}
+                    </li>
+
+                    <li class="list-group-item px-0">
+                        <strong>End:</strong>
+                        {{ trek.end_date }}
+                    </li>
+
+                </ul>
+
+                <div class="mt-auto">
+
+                    <a href="{{ url_for('user.trek_details', trek_id=trek.id) }}" class="btn btn-primary w-100">
+                        <i class="bi bi-eye me-2"></i>
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card shadow-sm">
+
+    <div class="card-body text-center py-5">
+
+        <i class="bi bi-signpost-2 display-1 text-muted"></i>
+
+        <h3 class="mt-3"> No Treks Available </h3>
+
+        <p class="text-muted">There are currently no open treks available for booking.</p>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
