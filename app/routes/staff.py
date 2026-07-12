@@ -69,6 +69,23 @@ def update_status(trek_id):
     status = request.form["status"]
     if status not in ALLOWED_STAFF_STATUSES:
         abort(400)
+
+    if status == "Ongoing" and date.today() < trek.start_date:
+        flash("A trek can only be marked as ongoing on or after its start date.", "danger")
+        return redirect(url_for("staff.trek_details", trek_id=trek.id))
+    
+    if trek.status == "Completed":
+        flash("Completed treks cannot be modified.", "danger")
+        return redirect(url_for("staff.trek_details", trek_id=trek.id))
+    
+    if trek.status == "Ongoing":
+        flash("An ongoing trek cannot be changed back to another status.", "danger")
+        return redirect(url_for("staff.trek_details", trek_id=trek.id))
+        
+    if status == "Ongoing" and trek.status != "Closed":
+        flash("Only closed treks can be marked as ongoing.", "danger")
+        return redirect(url_for("staff.trek_details", trek_id=trek.id))
+
     trek.status = status
 
     db.session.commit()
@@ -90,6 +107,10 @@ def update_slots(trek_id):
     if not total_slots.isdigit():
         flash("Enter valid value in total slots", "danger")
         return redirect(url_for("staff.trek_details", trek_id=trek_id))
+    
+    if trek.status in ("Ongoing", "Completed"):
+        flash("Slots cannot be modified after the trek has started.", "danger")
+        return redirect(url_for("staff.trek_details", trek_id=trek.id))
     
     total_slots = int(total_slots)
 

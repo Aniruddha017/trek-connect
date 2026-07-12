@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+Privacy Policy
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Privacy Policy</h1>
+
+    <p>
+        TrekConnect values your privacy and is committed to protecting your personal information.
+    </p>
+
+    <ul>
+
+        <li>Your information is used only for account management and trek bookings.</li>
+
+        <li>We do not sell or share personal information with third parties.</li>
+
+        <li>Passwords are securely stored in encrypted form.</li>
+
+        <li>Only authorized administrators can access user records when necessary.</li>
+
+    </ul>
+
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+
+</div>
+
+{% endblock %}

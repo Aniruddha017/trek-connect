@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+FAQ
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Frequently Asked Questions</h1>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5>How do I book a trek?</h5>
+            <p>
+                Register, log in, browse the available treks, and click the <strong>Book</strong> button to reserve your slot.
+            </p>
+
+            <hr>
+
+            <h5>Can I cancel my booking?</h5>
+            <p>
+                Yes. Bookings can be cancelled before the trek starts from the <strong>My Bookings</strong> page.
+            </p>
+
+            <hr>
+
+            <h5>How can I become a trek staff member?</h5>
+            <p>
+                Register as a staff directly or apply through your dashboard. Your application will be reviewed by an administrator before approval.
+            </p>
+
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-4">
+        Back to Home
+    </a>
+
+</div>
+
+{% endblock %}

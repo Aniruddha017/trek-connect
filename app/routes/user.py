@@ -98,6 +98,12 @@ def trek_details(trek_id):
 
     trek = Trek.query.get_or_404(trek_id)
 
+    has_booking = Booking.query.filter(Booking.user_id == current_user.id, Booking.trek_id == trek.id).first()
+
+
+    if trek.status not in ("Open", "Closed", "Ongoing") and not has_booking:
+        abort(404)
+
     return render_template("user/trek_details.html", trek=trek)
 
 
@@ -157,7 +163,7 @@ def payment(trek_id):
 @allowed_roles("TREKKER", "STAFF")
 def bookings():
     
-    bookings = Booking.query.filter_by(user_id=current_user.id).all()
+    bookings = Booking.query.filter(Booking.user_id == current_user.id, Booking.status == "Booked").all()
     return render_template("user/bookings.html", bookings=bookings)
 
 
@@ -284,7 +290,7 @@ def apply_staff():
 
         if not experience_years.isdigit():
             flash("enter digit only", "danger")
-            return(redirect(url_for("user.apply_staff")))
+            return redirect(url_for("user.apply_staff"))
 
         if not specialization:
             flash("Please enter your specialization.", "danger")

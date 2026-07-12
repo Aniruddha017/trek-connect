@@ -51,9 +51,19 @@ def treks():
     
     query = Trek.query
     if search != "":
-        query = query.filter(or_(Trek.name.ilike(f"%{search}%"), 
-                                 Trek.location.ilike(f"%{search}%"),
-                                 Trek.difficulty.ilike(f"%{search}%")))
+        if search.isdigit():
+            query = query.filter(or_(Trek.name.ilike(f"%{search}%"), 
+                                    Trek.location.ilike(f"%{search}%"),
+                                    Trek.difficulty.ilike(f"%{search}%"),
+                                    Trek.id == int(search),
+                                    Trek.status.ilike(f"%{search}%")))
+                
+        else:
+            query = query.filter(or_(Trek.name.ilike(f"%{search}%"), 
+                                    Trek.location.ilike(f"%{search}%"),
+                                    Trek.difficulty.ilike(f"%{search}%"),
+                                    Trek.status.ilike(f"%{search}%")))
+                                    
     
     treks = query.order_by(Trek.start_date).all()
 
@@ -71,8 +81,22 @@ def create_trek():
         name = request.form['name'].strip()
         location = request.form['location'].strip()
         difficulty = request.form['difficulty']
-        duration_days = int(request.form['duration_days'])
-        total_slots = int(request.form['total_slots'])
+        duration_days = request.form['duration_days']
+
+        if duration_days.isdigit():
+            duration_days = int(duration_days)
+        else:
+            flash("enter numeric value", "danger")
+            return redirect(url_for('admin.create_trek'))
+        
+        total_slots = request.form['total_slots']
+
+        if total_slots.isdigit():
+            total_slots = int(total_slots)
+        else:
+            flash("Numeric value only for total slots", "danger")
+            return redirect(url_for("admin.create_trek"))
+        
         available_slots = total_slots
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
@@ -120,7 +144,7 @@ def create_trek():
         
         if price < 0:
             flash("Price cannot be negative.", "danger")
-            return redirect(request.url)
+            return redirect(url_for("admin.create_trek"))
 
         trek = Trek(
             name = name,
@@ -137,7 +161,7 @@ def create_trek():
 
         db.session.add(trek)
         db.session.commit()
-
+        flash("Trek created successfully", "success")
         return redirect(url_for("admin.treks"))
     
     return render_template('admin/create.html', difficulties = constants.TREK_DIFFICULTIES)
@@ -176,9 +200,23 @@ def edit_trek(trek_id):
         name = request.form['name'].strip()
         location = request.form['location'].strip()
         difficulty = request.form['difficulty']
-        duration_days = int(request.form['duration_days'])
+        duration_days = request.form['duration_days']
+
+        if duration_days.isdigit():
+            duration_days = int(duration_days)
+        else:
+            flash("enter numeric value", "danger")
+            return redirect(url_for('admin.edit_trek', trek_id=trek.id))
+        
+        total_slots = request.form['total_slots']
+
+        if total_slots.isdigit():
+            total_slots = int(total_slots)
+        else:
+            flash("Numeric value only for total slots", "danger")
+            return redirect(url_for("admin.edit_trek", trek_id=trek.id))
+    
         description = request.form["description"]
-        total_slots = int(request.form['total_slots'])
         start_date = datetime.strptime(request.form['start_date'], "%Y-%m-%d").date()
         end_date = start_date + timedelta(days=(duration_days -1))
         status = request.form["status"]
@@ -211,10 +249,18 @@ def edit_trek(trek_id):
         if status not in constants.TREK_STATUSES:
             flash("Invalid trek status", "danger")
             return redirect(url_for("admin.edit_trek", trek_id=trek.id))
-        
+                
         if price < 0:
             flash("Price cannot be negative.", "danger")
-            return redirect(request.url)
+            return redirect(url_for("admin.edit_trek", trek_id=trek.id))
+        
+        if status == "Open" and not trek.assigned_staff:
+            flash("Assign atleast one staff member before changing the trek status to Open.", "danger")
+            return redirect(url_for("admin.edit_trek", trek_id=trek.id))
+        
+        if status == "Completed":
+            flash("Only assigned staff can mark a trek as completed.", "danger")
+            return redirect(url_for("admin.edit_trek", trek_id=trek.id))
 
 
         trek.name = name
@@ -279,11 +325,17 @@ def users():
     search = request.args.get("search", "").strip()
     
     query = User.query
-    
     if search:
-        query = query.filter(or_(User.name.ilike(f"%{search}%"),
-                                 User.email.ilike(f"%{search}%"),
-                                 User.mobile_number.ilike(f"%{search}%")))
+        if search.isdigit():
+            query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                    User.email.ilike(f"%{search}%"),
+                                    User.mobile_number.ilike(f"%{search}%"),
+                                    User.id == int(search)))
+
+        else:
+            query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                    User.email.ilike(f"%{search}%"),
+                                    User.mobile_number.ilike(f"%{search}%")))
     
     users = query.order_by(User.name).all()
 
@@ -298,8 +350,16 @@ def staff():
     query = User.query.join(StaffProfile).filter(User.role=="STAFF", StaffProfile.approval_status == "Approved")
     
     if search:
-        query = query.filter(or_(User.name.ilike(f"%{search}%"),
-                                 User.email.ilike(f"%{search}%")))
+        if search.isdigit():
+            query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                    User.email.ilike(f"%{search}%"),
+                                    User.mobile_number.ilike(f"%{search}%"),
+                                    User.id == int(search)))
+
+        else:
+            query = query.filter(or_(User.name.ilike(f"%{search}%"),
+                                    User.email.ilike(f"%{search}%"),
+                                    User.mobile_number.ilike(f"%{search}%")))
 
     staff_members = query.order_by(User.name).all()
 
@@ -321,12 +381,20 @@ def staff_requests():
         StaffProfile.approval_status == "Pending"))
 
     if search:
-        query = query.filter(or_(
-            User.name.ilike(f"%{search}%"),
-            User.email.ilike(f"%{search}%"),
-            User.mobile_number.ilike(f"%{search}%")
-        ))
-    
+        if search.isdigit():
+            query = query.filter(or_(
+                User.name.ilike(f"%{search}%"),
+                User.email.ilike(f"%{search}%"),
+                User.mobile_number.ilike(f"%{search}%"),
+                User.id == int(search)
+            ))
+        else:
+            query = query.filter(or_(
+                User.name.ilike(f"%{search}%"),
+                User.email.ilike(f"%{search}%"),
+                User.mobile_number.ilike(f"%{search}%"),
+            ))
+        
     pending_staff = query.order_by(User.name).all()
 
     return render_template("admin/staff_requests.html", pending_staff=pending_staff)
@@ -445,6 +513,7 @@ def demote_to_user(user_id):
         user.staff_profile.approval_status = "Rejected"
     
     db.session.commit()
+    flash("User demoted successfully!", "success")
     return redirect(url_for("admin.users"))
 
 
@@ -460,6 +529,11 @@ def blacklist_user(user_id):
         if trek.status != "Completed":
             active_treks.append(trek)
     
+    active_bookings = Booking.query.filter_by(
+        user_id = user.id,
+        status= "Booked"
+    ).count()
+    
     if active_treks:
         flash("Staff assigned to some trek, clear assignment first", "danger")
         return redirect(url_for("admin.users"))
@@ -470,6 +544,11 @@ def blacklist_user(user_id):
     
     user.is_blacklisted = True
     db.session.commit()
+
+    if active_bookings:
+        flash(f"User blacklisted! User had { active_bookings } trek(s) left to be completed.", "warning")
+    else:
+        flash("User blacklisted successfully!", "success")
     return redirect(url_for("admin.users"))
 
 @admin.route("/users/whitelist/<int:user_id>", methods=["POST"])
@@ -480,6 +559,8 @@ def whitelist_user(user_id):
     user = User.query.get_or_404(user_id)
     user.is_blacklisted = False
     db.session.commit()
+
+    flash("User whitelisted successfully!", "success")
     return redirect(url_for("admin.users"))
 
 @admin.route("/trek/<int:trek_id>/assign", methods=["GET", "POST"])
@@ -499,6 +580,22 @@ def assign_staff_to_trek(trek_id):
         selected_staff_ids = set(map(int, request.form.getlist("staff_ids")))
 
         old_staff = list(trek.assigned_staff)
+
+        for staff_id in selected_staff_ids:
+            staff = User.query.get_or_404(staff_id)
+            if staff.role != "STAFF":
+                continue
+
+            for assigned_trek in staff.assigned_treks:
+                if assigned_trek.id == trek.id:
+                    continue 
+                if assigned_trek.status == "Completed":
+                    continue 
+
+                if (trek.start_date <= assigned_trek.end_date and trek.end_date >= assigned_trek.start_date):
+                    flash(f"{staff.name} already assigned to {assigned_trek.name} from {assigned_trek.start_date} to {assigned_trek.end_date}.", "danger")
+                    return redirect(url_for("admin.assign_staff_to_trek", trek_id=trek.id)) 
+            
 
         trek.assigned_staff.clear()
 
@@ -553,7 +650,9 @@ def bookings():
         query = query.filter(or_(
             User.name.ilike(f"%{search}%"),
             User.email.ilike(f"%{search}%"),
-            Trek.name.ilike(f"%{search}%")
+            Trek.name.ilike(f"%{search}%"),
+            Trek.status.ilike(f"%{search}%"),
+            Booking.status.ilike(f"%{search}%")
         ))
 
     bookings = query.order_by(Booking.booking_date.desc()).all()
@@ -619,3 +718,32 @@ def profile():
         return redirect(url_for("admin.profile"))
 
     return render_template("admin/profile.html")
+
+
+
+@admin.route("/users/<int:user_id>/history")
+@login_required
+@allowed_roles("ADMIN")
+def user_history(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    bookings = (
+        Booking.query
+        .filter_by(user_id=user.id)
+        .order_by(Booking.booking_date.desc())
+        .all()
+    )
+
+    return render_template("admin/user_history.html", user=user, bookings=bookings)
+
+
+
+@admin.route("/treks/<int:trek_id>")
+@login_required
+@allowed_roles("ADMIN")
+def trek_details(trek_id):
+
+    trek = Trek.query.get_or_404(trek_id)
+
+    return render_template("admin/trek_details.html", trek=trek)

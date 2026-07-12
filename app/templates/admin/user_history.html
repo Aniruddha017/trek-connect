@@ -1,0 +1,189 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+User Trekking History
+{% endblock %}
+
+{% block sidebar %}
+    {% include "components/admin_sidebar.html" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="container-fluid">
+
+    <!-- Heading -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Trekking History
+            </h2>
+
+            <p class="text-muted mb-0">
+                Complete booking history for <strong>{{ user.name }}</strong>
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Users
+        </a>
+
+    </div>
+
+    <!-- User Summary -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row text-center">
+
+                <div class="col-md-3">
+                    <h6 class="text-muted">Name</h6>
+                    <p class="fw-semibold mb-0">{{ user.name }}</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="text-muted">Email</h6>
+                    <p class="fw-semibold mb-0">{{ user.email }}</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="text-muted">Role</h6>
+                    <span class="badge bg-primary">
+                        {{ user.role }}
+                    </span>
+                </div>
+
+                <div class="col-md-3">
+                    <h6 class="text-muted">Total Bookings</h6>
+                    <span class="badge bg-success fs-6">
+                        {{ bookings|length }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Booking History -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                Booking History
+            </h5>
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle text-center mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Trek</th>
+                            <th>Location</th>
+                            <th>Booking Date</th>
+                            <th>Trek Date</th>
+                            <th>Booking Status</th>
+                            <th>Payment</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ booking.trek.name }}
+                            </td>
+
+                            <td>
+                                {{ booking.trek.location }}
+                            </td>
+
+                            <td>
+                                {{ booking.booking_date.strftime("%d %b %Y") }}
+                            </td>
+
+                            <td>
+                                {{ booking.trek.start_date.strftime("%d %b %Y") }}
+                            </td>
+
+                            <td>
+
+                                {% if booking.status == "Booked" %}
+                                    <span class="badge bg-primary">Booked</span>
+
+                                {% elif booking.status == "Completed" %}
+                                    <span class="badge bg-success">Completed</span>
+
+                                {% elif booking.status == "Cancelled" %}
+                                    <span class="badge bg-danger">Cancelled</span>
+
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        {{ booking.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if booking.payment_status == "Paid" %}
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ booking.payment_status }}
+                                    </span>
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="6" class="py-5">
+
+                                <i class="bi bi-clock-history fs-1 text-muted d-block mb-2"></i>
+
+                                <h5>No Booking History</h5>
+
+                                <p class="text-muted mb-0">
+                                    This user has not booked any treks yet.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

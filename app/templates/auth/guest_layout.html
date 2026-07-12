@@ -38,8 +38,10 @@
                     <a class="nav-link" href="/"> Home </a>
                 </li>
 
-                <li class="nav-item mb-3 mb-lg-0">
-                    <a class="nav-link" href="#"> Explore Treks </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('user.treks') if current_user.is_authenticated else url_for('auth.login') }}">
+                        Explore Treks
+                    </a>
                 </li>
 
                 <li class="nav-item mb-3 mb-lg-0">
@@ -125,7 +127,7 @@
 
                 <h5>Quick Links</h5>
                 <ul class="list-unstyled" >
-                    <li><a href="/" class="text-decoration-none text-light">Home</a></li>
+                    <li><a href="#" class="text-decoration-none text-light">Home</a></li>
                     <li><a href="#" class="text-decoration-none text-light">Explore Treks</a></li>
                     <li><a href="/about" class="text-decoration-none text-light">About</a></li>
                     <li><a href="/contact" class="text-decoration-none text-light">Contact</a></li>

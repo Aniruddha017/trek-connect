@@ -33,12 +33,14 @@ def create_app():
     from app.routes.admin import admin
     from app.routes.staff import staff
     from app.routes.user import user
+    from app.routes.api import api
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(admin)
     app.register_blueprint(staff)
     app.register_blueprint(user)
+    app.register_blueprint(api)
     
 
     return app 

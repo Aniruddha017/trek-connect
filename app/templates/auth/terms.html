@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Terms & Conditions
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Terms & Conditions</h1>
+
+    <ul>
+
+        <li>Users must provide accurate registration information.</li>
+
+        <li>Bookings are subject to trek availability.</li>
+
+        <li>Cancellations are permitted only before the trek begins.</li>
+
+        <li>Trek staff instructions must be followed during all trekking activities.</li>
+
+        <li>TrekConnect reserves the right to suspend accounts violating platform policies.</li>
+
+    </ul>
+
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+
+</div>
+
+{% endblock %}

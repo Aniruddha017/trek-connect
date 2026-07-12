@@ -25,7 +25,31 @@ def home():
 
     return render_template("auth/landing.html", featured_treks=featured_treks, total_users=total_users, total_treks=total_treks, total_bookings=total_bookings, total_staff=total_staff, dashboard_url=dashboard_url)
 
-@main.route("/treks")
-def treks():
-    return "<h2>Available Treks will be shown here</h2>"
+@main.route("/about")
+def about():
+    return render_template("auth/about.html")
 
+
+@main.route("/contact")
+def contact():
+    return render_template("auth/contact.html")
+
+
+@main.route("/faq")
+def faq():
+    return render_template("auth/faq.html")
+
+
+@main.route("/privacy")
+def privacy():
+    return render_template("auth/privacy.html")
+
+
+@main.route("/terms")
+def terms():
+    return render_template("auth/terms.html")
+
+
+@main.route("/safety")
+def safety():
+    return render_template("auth/safety.html")

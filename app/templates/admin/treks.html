@@ -100,7 +100,12 @@ Manage Treks
                                 {% else %}
 
                                     <span class="text-muted">
-                                        No Image
+                                    <img
+                                        src="{{ url_for('static', filename='images/trek-placeholder.jpg') }}"
+                                        class="rounded"
+                                        width="90"
+                                        height="60">
+
                                     </span>
 
                                 {% endif %}
@@ -109,9 +114,9 @@ Manage Treks
 
                             <!-- Name -->
                             <td>
-
-                                <strong>{{ trek.name }}</strong>
-
+                                <a href="{{ url_for('admin.trek_details', trek_id=trek.id) }}" class="fw-bold">
+                                    {{ trek.name }}
+                                </a>
                             </td>
 
                             <!-- Location -->

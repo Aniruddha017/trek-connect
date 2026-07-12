@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+Safety Guidelines
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Safety Guidelines</h1>
+
+    <div class="alert alert-success">
+        Your safety is our highest priority.
+    </div>
+
+    <ul>
+
+        <li>Wear proper trekking shoes and suitable clothing.</li>
+
+        <li>Carry sufficient drinking water.</li>
+
+        <li>Follow all instructions provided by trek staff.</li>
+
+        <li>Carry essential medications and a basic first-aid kit.</li>
+
+        <li>Respect nature and avoid littering.</li>
+
+        <li>Inform trek staff immediately if you feel unwell during the trek.</li>
+
+    </ul>
+
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+
+</div>
+
+{% endblock %}

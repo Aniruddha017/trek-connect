@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+About TrekConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="mb-4">About TrekConnect</h1>
+
+    <p class="fw-semibold">
+        TrekConnect is a trekking management platform designed to simplify the process of managing trekking adventures.
+    </p>
+
+    <p>
+        The platform enables trekkers to discover and book treks while allowing trek staff to manage participants and trek operations. Administrators can efficiently oversee users, staff members, bookings, and trekking events through a centralized dashboard.
+    </p>
+
+    <p>
+        This application was developed as part of the <strong>Modern Application Development I</strong> course project.
+    </p>
+
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+
+</div>
+
+{% endblock %}

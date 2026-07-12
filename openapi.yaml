@@ -1,0 +1,116 @@
+openapi: 3.0.0
+
+info:
+  title: Trekking Management System API
+  description: JSON API for Trekking Management System, it includes 6 api endpoints 
+  version: 1.0.0
+
+paths:
+
+  /api/treks/{trek_id}:
+    get:
+      summary: Get trek details
+      tags:
+        - Trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Trek details retrieved successfully
+        "404":
+          description: Trek not found
+
+  /api/users/{user_id}:
+    get:
+      summary: Get user details
+      tags:
+        - User
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User details retrieved successfully
+        "404":
+          description: User not found
+
+  /api/bookings/{booking_id}:
+    get:
+      summary: Get booking details
+      tags:
+        - Booking
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking details retrieved successfully
+        "404":
+          description: Booking not found
+
+  /api/bookings/delete/{booking_id}:
+    delete:
+      summary: Cancel a booking
+      tags:
+        - Booking
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking cancelled successfully
+        "400":
+          description: Invalid cancellation request
+        "403":
+          description: User not authorized
+        "404":
+          description: Booking not found
+
+  /api/treks/{trek_id}/participants:
+    get:
+      summary: Get participants of a trek
+      tags:
+        - Trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Participant list retrieved successfully
+        "404":
+          description: Trek not found
+
+  /api/staff/{user_id}/approve:
+    post:
+      summary: Approve a trekker as staff
+      tags:
+        - Staff
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Staff approved successfully
+        "400":
+          description: Invalid approval request
+        "404":
+          description: Staff profile not found
