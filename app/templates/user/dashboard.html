@@ -74,6 +74,50 @@ User Dashboard
     </div>
 </div>
 
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Booking History</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:300px;">
+                    <canvas id="historyChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Preferred Trek Difficulty</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div style="height:300px;">
+                    <canvas id="difficultyChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <div class="card shadow-sm">
 
     <div class="card-header bg-dark text-white justify-content-between ">
@@ -154,5 +198,23 @@ User Dashboard
 
 
 </div>
+
+{% endblock %}
+
+{% block script %}
+
+{{ super() }}
+
+<div id="chart-data"
+     data-booked="{{ booked_count }}"
+     data-completed="{{ completed_count }}"
+     data-cancelled="{{ cancelled_count }}"
+     data-easy="{{ easy_count }}"
+     data-moderate="{{ moderate_count }}"
+     data-hard="{{ hard_count }}"
+     hidden>
+</div>
+
+<script src="{{ url_for('static', filename='js/user_charts.js') }}"></script>
 
 {% endblock %}

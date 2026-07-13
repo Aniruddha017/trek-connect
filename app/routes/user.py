@@ -64,7 +64,46 @@ def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     quick_view = Trek.query.filter_by(status="Open").order_by(Trek.start_date).limit(3).all()
 
-    return render_template("user/dashboard.html", open_treks=open_treks, bookings=bookings, quick_view=quick_view)
+    booked_count = 0
+    completed_count = 0
+    cancelled_count = 0
+
+    easy_count = 0
+    moderate_count = 0
+    hard_count = 0
+
+    for booking in current_user.bookings:
+
+        if booking.status == "Booked":
+            booked_count += 1
+
+        elif booking.status == "Completed":
+            completed_count += 1
+
+        elif booking.status == "Cancelled":
+            cancelled_count += 1
+
+        if booking.trek.difficulty == "Easy":
+            easy_count += 1
+
+        elif booking.trek.difficulty == "Moderate":
+            moderate_count += 1
+
+        elif booking.trek.difficulty == "Hard":
+            hard_count += 1
+
+    
+
+    return render_template("user/dashboard.html", 
+                           open_treks=open_treks, 
+                           bookings=bookings, 
+                           quick_view=quick_view,
+                           booked_count=booked_count,
+                           completed_count=completed_count,
+                           cancelled_count=cancelled_count,
+                           easy_count=easy_count,
+                           moderate_count=moderate_count,
+                           hard_count=hard_count)
 
 
 @user.route("/treks")

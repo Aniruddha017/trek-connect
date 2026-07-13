@@ -28,7 +28,7 @@ Staff Dashboard
 
             <div class="card-body">
                 <i class="bi bi-signpost-2 display-5 text-primary"></i>
-                <h5 class="mt-3"> Assigned Treks </h5>
+                <h5 class="mt-3"> Active Treks </h5>
                 <h2 class="fw-bold"> {{ trek_count }} </h2>
 
             </div>
@@ -42,13 +42,31 @@ Staff Dashboard
 
             <div class="card-body">
                 <i class="bi bi-people display-5 text-success"></i>
-                <h5 class="mt-3"> Registered Participants </h5>
+                <h5 class="mt-3">  Active Treks Participants </h5>
                 <h2 class="fw-bold"> {{ participants_count }} </h2>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- chart -->
+<div class="card shadow-sm border-0 mt-4">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Participants Per Active Trek</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div style="height:350px;">
+            <canvas id="participantChart"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
 
 <!-- Staff Guidelines -->
 <div class="card shadow-sm">
@@ -103,5 +121,19 @@ Staff Dashboard
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+
+{{ super() }}
+
+<div id="chart-data"
+     data-trek-names="{{ trek_names|join(',') }}"
+     data-participant-counts="{{ participant_per_trek|join(',') }}"
+     hidden>
+</div>
+
+<script src="{{ url_for('static', filename='js/staff_charts.js') }}"></script>
 
 {% endblock %}

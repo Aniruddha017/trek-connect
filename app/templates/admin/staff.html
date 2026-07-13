@@ -66,7 +66,7 @@ Manage Staff
                         type="text"
                         class="form-control"
                         name="search"
-                        placeholder="Search by name or email..."
+                        placeholder="Search by id, name, mobile or email..."
                         value="{{ request.args.get('search', '') }}">
 
                     <button class="btn btn-primary">
@@ -96,8 +96,10 @@ Manage Staff
                     <thead class="table-light">
 
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Status</th>
                             <th>Experience</th>
                             <th>Specialization</th>
                             <th>Assigned Treks</th>
@@ -111,11 +113,30 @@ Manage Staff
 
                         <tr>
                             <td class="fw-semibold">
+                                {{ staff.id }}
+                            </td>
+                            <td class="fw-semibold">
                                 {{ staff.name }}
                             </td>
 
                             <td>
                                 {{ staff.email }}
+                            </td>
+                            <td>
+                                    {% if staff.is_blacklisted %}
+
+                                        <span class="badge bg-danger">
+                                            Blacklisted
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+
+                                    {% endif %}
+
                             </td>
 
                             <td>
@@ -149,7 +170,7 @@ Manage Staff
 
                                         {% for trek in staff.assigned_treks %}
 
-                                            <a href="{{ url_for('admin.trek_participants', trek_id=trek.id) }}" class="badge bg-info text-dark text-decoration-none">
+                                            <a href="{{ url_for('admin.trek_details', trek_id=trek.id) }}" class="badge bg-info text-dark text-decoration-none">
                                                 {{ trek.name }}
                                             </a>
 
@@ -172,7 +193,7 @@ Manage Staff
 
                         <tr>
 
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
 
                                 <i class="bi bi-person-badge display-5 d-block mb-3"></i>
 

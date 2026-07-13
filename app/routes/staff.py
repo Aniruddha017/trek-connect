@@ -21,11 +21,23 @@ def verify_staff_access(trek):
 @login_required
 @allowed_roles("STAFF")
 def dashboard():
-    treks = current_user.assigned_treks
-    trek_count = len(treks)
-    participants_count = sum(len(trek.bookings) for trek in treks)
+    
+    treks = [trek for trek in current_user.assigned_treks if trek.status != "Completed"]
 
-    return render_template("staff/dashboard.html",treks=treks, trek_count=trek_count, participants_count=participants_count)
+    trek_count = len(treks)
+    
+    participant_per_trek = [len([b for b in trek.bookings if b.status != "Cancelled"]) for trek in treks]
+
+    participants_count = sum(participant_per_trek)
+    
+    trek_names = [trek.name for trek in treks]
+
+    return render_template("staff/dashboard.html",
+                           treks=treks, 
+                           trek_count=trek_count, 
+                           participants_count=participants_count, 
+                           participant_per_trek=participant_per_trek, 
+                           trek_names=trek_names)
 
 @staff.route("/treks")
 @login_required
@@ -192,7 +204,7 @@ def profile():
             return redirect(url_for("staff.profile"))
         
         if not experience_years.isdigit():
-            flash("enter valid experience year")
+            flash("enter valid experience year", "danger")
             return redirect(url_for("staff.profile"))
         
         experience_years = int(experience_years)

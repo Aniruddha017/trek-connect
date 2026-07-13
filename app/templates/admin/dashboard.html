@@ -136,6 +136,74 @@ Admin Dashboard
         </div>
     </div>
 
+    <!-- Analytics Dashboard -->
+    <div class="mb-5">
+
+        <h4 class="fw-bold mb-3">Analytics Dashboard</h4>
+
+        <div class="row g-4">
+
+            <!-- System Overview -->
+            <div class="col-12">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 text-center fw-bold">System Overview</h5>
+                    </div>
+
+                    <div class="card-body" style="height: 300px;">
+
+                        <canvas id="overviewChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- User Distribution -->
+            <div class="col-lg-6">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 text-center fw-bold">User Distribution</h5>
+                    </div>
+
+                    <div class="d-flex justify-content-center" style="height: 300px;">
+
+                        <canvas id="userChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Trek Status -->
+            <div class="col-lg-6">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 text-center fw-bold">Trek Status</h5>
+                    </div>
+
+                    <div class="d-flex justify-content-center" style="height: 300px;">
+
+                        <canvas id="trekChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
     <!-- Recent Bookings -->
     <div class="card shadow-sm border-0">
 
@@ -184,5 +252,28 @@ Admin Dashboard
         </div>
     </div>
 </div>
+
+{% endblock %}
+{% block script %}
+
+{{ super() }}
+
+<div id="chart-data"
+     data-total-users="{{ total_users }}"
+     data-total-staff="{{ total_staff }}"
+     data-total-treks="{{ total_treks }}"
+     data-total-bookings="{{ total_bookings }}"
+     data-active-users="{{ active_users }}"
+     data-blacklisted-users="{{ blacklisted_users }}"
+     data-pending-treks="{{ pending_treks }}"
+     data-open-treks="{{ open_treks }}"
+     data-closed-treks="{{ closed_treks }}"
+     data-ongoing-treks="{{ ongoing_treks }}"
+     data-completed-treks="{{ completed_treks }}"
+     hidden>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/admin_charts.js') }}"></script>
 
 {% endblock %}

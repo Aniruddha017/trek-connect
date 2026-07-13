@@ -32,6 +32,13 @@ def dashboard():
     total_bookings = Booking.query.count()
     recent_bookings = (Booking.query.order_by(Booking.booking_date.desc()).limit(5).all())
 
+    active_users = User.query.filter_by(is_blacklisted=False).count()
+    blacklisted_users = User.query.filter_by(is_blacklisted=True).count()
+    pending_treks = Trek.query.filter_by(status="Pending").count()
+    open_treks = Trek.query.filter_by(status="Open").count()
+    closed_treks = Trek.query.filter_by(status="Closed").count()
+    ongoing_treks = Trek.query.filter_by(status="Ongoing").count()
+    completed_treks = Trek.query.filter_by(status="Completed").count()
 
     return render_template(
         "admin/dashboard.html",
@@ -39,7 +46,14 @@ def dashboard():
         total_staff=total_staff,
         total_treks=total_treks,
         total_bookings=total_bookings,
-        recent_bookings=recent_bookings
+        recent_bookings=recent_bookings,
+        active_users=active_users,
+        blacklisted_users=blacklisted_users,
+        pending_treks=pending_treks,
+        open_treks=open_treks,
+        closed_treks=closed_treks,
+        ongoing_treks=ongoing_treks,
+        completed_treks=completed_treks
     )
 
 
@@ -82,6 +96,7 @@ def create_trek():
         location = request.form['location'].strip()
         difficulty = request.form['difficulty']
         duration_days = request.form['duration_days']
+        description = request.form["description"].strip()
 
         if duration_days.isdigit():
             duration_days = int(duration_days)
@@ -138,8 +153,8 @@ def create_trek():
             flash("Invalid difficulty entered", "danger")
             return redirect(url_for("admin.create_trek"))
         
-        if start_date < date.today():
-            flash("start date cannot be in past!", "danger")
+        if start_date <= date.today():
+            flash("start date cannot be in past or today!", "danger")
             return redirect(url_for("admin.create_trek"))
         
         if price < 0:
@@ -153,6 +168,7 @@ def create_trek():
             duration_days = duration_days,
             total_slots = total_slots,
             available_slots = available_slots,
+            description = description,
             start_date = start_date,
             end_date = end_date,
             price=price,
