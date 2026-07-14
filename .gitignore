@@ -1,9 +1,3 @@
 /.myenv
-/instance
 __pycache__
-/enhancements.md
-/seed_data.py
-*.db
 *.log
-app/static/uploads
-app/static/profile_images

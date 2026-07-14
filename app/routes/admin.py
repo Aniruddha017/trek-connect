@@ -34,7 +34,7 @@ def dashboard():
 
     active_users = User.query.filter_by(is_blacklisted=False).count()
     blacklisted_users = User.query.filter_by(is_blacklisted=True).count()
-    pending_treks = Trek.query.filter_by(status="Pending").count()
+    pending_treks = Trek.query.filter(Trek.status.in_(("Pending", "Approved"))).count()
     open_treks = Trek.query.filter_by(status="Open").count()
     closed_treks = Trek.query.filter_by(status="Closed").count()
     ongoing_treks = Trek.query.filter_by(status="Ongoing").count()

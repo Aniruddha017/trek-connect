@@ -1,6 +1,6 @@
 # Trekking Management Application
 
-A role-based web application built using **Flask** for managing trekking events, staff assignments, and trek bookings. This project was developed as part of the **Modern Application Development I (MAD-I)** course.
+A role-based web application built using **Flask** for managing trekking events, staff assignments, and trek bookings. 
 
 The application provides separate dashboards for **Admin**, **Trek Staff**, and **Trekkers**, enabling efficient management of treks, bookings, participants, and staff while preventing overbooking and unauthorized access.
 
@@ -78,6 +78,7 @@ The application uses **SQLite** with SQLAlchemy ORM.
 - StaffProfile
 - Trek
 - Booking
+- StaffNotification
 
 ### Relationships
 
@@ -85,6 +86,7 @@ The application uses **SQLite** with SQLAlchemy ORM.
 - One Trek → Many Bookings
 - Many Staff ↔ Many Treks
 - One User ↔ One Staff Profile
+- One User → Many Staff Notifications
 
 ---
 
@@ -102,6 +104,7 @@ The application uses **SQLite** with SQLAlchemy ORM.
 - HTML5
 - Bootstrap 5
 - Jinja2 Templates
+- Chart.js
 
 ### Database
 
@@ -122,6 +125,7 @@ project/
 │   │   ├── admin.py
 │   │   ├── auth.py
 │   │   ├── staff.py
+|   |   ├── api.py
 │   │   └── user.py
 │   ├── templates/
 │   └── static/
@@ -133,10 +137,21 @@ project/
 ├── instance/
 ├── config.py
 ├── run.py
+├── __init_db__.py
+├── api.yaml
 └── requirements.txt
 ```
 
 ---
+
+### Static Uploads
+
+Uploaded files are stored in:
+
+- `app/static/uploads/profile_images`
+- `app/static/uploads/trek_images`
+
+If the upload directories do not exist, create them before running the application:
 
 ## Installation guide for Windows
 
@@ -160,6 +175,31 @@ venv\Scripts\activate
 
 ```bash
 pip install -r requirements.txt
+```
+
+### Initialize the Database
+
+Run the following command to create the database and the default administrator account:
+
+```bash
+python __init_db__.py
+```
+
+This creates:
+
+- SQLite database (`trek.db`)
+- Default administrator account
+
+**Admin Credentials**
+
+Email:
+```
+admin@trek.com
+```
+
+Password:
+```
+admin@123
 ```
 
 ### Run the application
@@ -196,6 +236,14 @@ http://127.0.0.1:5000/
 - Booking history
 - Trek status tracking
 - Responsive Bootstrap UI
+- REST APIs with JSON responses for limited operations
+- Analytics dashboards using Chart.js
+
+---
+
+## API Documentation
+
+The REST API specification is provided separately in the accompanying YAML file.
 
 ---
 
@@ -218,6 +266,13 @@ http://127.0.0.1:5000/
 The project follows the requirements specified in the MAD-I project statement, including database creation through SQLAlchemy models, role-based authentication, trek booking management, and trekking history tracking.
 
 ---
+
+## Image Credits
+
+Images used in the landing page and sample trek images are sourced from publicly available websites for educational and demonstration purposes only.
+
+All trademarks, photographs, and other media remain the property of their respective owners.
+
 
 ## License
 
